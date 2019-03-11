@@ -1,0 +1,1147 @@
+<apex:page sidebar="false" showHeader="false" standardStylesheets="false" controller="Underwriting_CTRL">
+    <html ng-app="dashboadrdApp">
+    <title>Underwriting Dashboard</title>
+    <head>
+        <style>
+                .red-background{
+                background-color:  #f37373;
+                }
+                .textAreaStyle{
+                width: 100%;
+                padding: 12px 20px;
+                margin: 8px 0;
+                display: inline-block;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-sizing: border-box;
+                }
+
+                .sticky {
+                position: fixed;
+                top: 0;
+                background-color: #ebebe4 !important;
+                float: left;
+                width: 94.75%;
+                z-index: 11111;
+                }
+                input[type=text], select {
+                width: 100%;
+                padding: 12px 20px;
+                margin: 8px 0;
+                display: inline-block;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-sizing: border-box;
+                }
+                .accordion {
+                /*background-color: #eee;*/
+                background-color: rgb(0,176,240);
+                color: #444;
+                cursor: pointer;
+                padding: 9px;
+                width: 100%;
+                border: none;
+                text-align: left;
+                outline: none;
+                font-size: 15px;
+                transition: 0.4s;
+                }
+
+                .active, .accordion:hover {
+                /*background-color: #ccc;*/
+                background-color: rgb(0,176,240);
+                }
+
+                .panel {
+                padding: 0 18px;
+                display: block;
+                background-color: white;
+                overflow: hidden;
+                }
+
+
+            </style>
+        <c:PageResource />
+        <script src="{!$Resource.dashboardJs_EAE}">
+        </script>
+
+        <script>
+
+            var creditScore = {!creditScoreStr};
+            var appId       = '{!appId}';
+            var sancProcess =  '{!sanprocessJson}';
+            var rAuthTypeID = '{!auditRTypeID}';
+            var rTCTypeID   = '{!auditTCRTypeID}';
+            var prerTCTypeID   = '{!auditPreTCRTypeID}';
+            var dashType    = '{!dashboardFor}';
+            var riskUser = {!riskUser};
+            console.log('sancProcess');
+            console.log(sancProcess);
+            </script>
+
+    </head>
+
+    <body ng-controller='dashboadrdCtrl' class='bodyDiv' ng-disabled="true" >
+    <div class="header">
+        <h2 class="rightDiv floatLeft">
+            Credit underwriting dashboard{{dashboardType}}<!-- designed for {{creditScore.loggedInUser.Designation__c}} review-->
+        </h2>
+        <div class="leftDiv floatRight textAlignRight">
+            <a href="/{{applicationId}}" class="previous">&#8249;  Back
+                <!-- <img style="height:30px" src="{!$Resource.PreviousBtn}"/>-->
+            </a>
+        </div>
+    </div>
+    <div >
+
+        <fieldset  >
+
+
+            <div class="formDiv" >
+                <h4 class='subHeader'>
+                    Borrower details
+                </h4>
+                <div class="row">
+                    <h4 class="tagnames" >
+                        Firm Name:
+                    </h4>
+                    <span class="tagValues">{{creditScore.applicationInfo.genesis__Account__r.Name}}</span>
+                </div>
+                <div class="row">
+                    <h4 class="tagnames" >
+                        Overall Exposure:
+                    </h4>
+                    <span class="tagValues">&#8377; {{creditScore.applicationInfo.genesis__Account__r.Overall_Exposure__c}}<span style="border-radius: 100%;border: 1px solid #eee;background: #e8e8e8;float: right;margin-left: 5px;cursor:pointer; " ng-click='exposure();'><!--apex:image url="{!$Resource.plus}" style="width:100%;"/--></span>
+                            </span>
+
+                </div>
+                <div class="row">
+                    <h4 class="tagnames" >
+                        Application No:
+                    </h4>
+                    <span class="tagValues">{{creditScore.applicationInfo.Name}}</span>
+                </div>
+                <div class="row">
+                    <h4 class="tagnames" >
+                        Customer Id:
+                    </h4>
+                    <span class="tagValues">{{creditScore.applicationInfo.genesis__Account__r.CBS_Customer_ID__c}}</span>
+                </div>
+                <div class="row">
+                    <h4 class="tagnames" >
+                        Line of Activity:
+                    </h4>
+                    <span class="tagValues">{{creditScore.applicationInfo.genesis__Account__r.Line_of_Activity__c}}</span>
+                </div>
+                <div class="row">
+                    <h4 class="tagnames" >
+                        Group Name:
+                    </h4>
+                    <span class="tagValues">{{creditScore.applicationInfo.genesis__Account__r.Group_Name__c}}</span>
+                </div>
+                <div class="row">
+                    <h4 class="tagnames" >
+                        Branch Code:
+                    </h4>
+                    <span class="tagValues">{{creditScore.applicationInfo.Branch_Code__c}}</span>
+                </div>
+                <div class="row">
+                    <h4 class="tagnames" >
+                        Key Persons:
+                    </h4>
+                    <span class="tagValues">{{creditScore.applicationInfo.genesis__Account__r.Name_of_the_Chief_Person__c}}</span>
+                </div>
+                <div class="row">
+                    <h4 class="tagnames" >
+                        Branch Name:
+                    </h4>
+                    <span class="tagValues">{{creditScore.applicationInfo.Branch_Name__c}}</span><!--loggedInUser.Name-->
+                </div>
+                <div class="row">
+                    <h4 class="tagnames" >
+                        Business description:
+                    </h4>
+
+                </div>
+                <div class="row">
+                    <h4 class="tagnames" >
+                        Final Coverage:
+                    </h4>
+                    <span class="tagValues" >{{creditScore.applicationInfo.Security_coverage__c | number : 2}}</span>
+                </div>
+                <div class="row">
+                    <h4 class="tagnames" >
+                        Deviation Reason:
+                    </h4>
+                    <span class="tagValues" >{{creditScore.applicationInfo.Deviation_Reason__c}}</span>
+                </div>
+                <div class="row" ng-show="creditScore.applicationInfo.RecordType.DeveloperName=='SME_NEW_Loan'">
+                    <h4 class="tagnames" >
+                        Type Of Customer:
+                    </h4>
+                    <span class="tagValues" >{{typeOfCustomer}}</span>
+                </div>
+                <div class="row" >
+                    <h4 class="tagnames" >
+                        Priority Sector:
+                    </h4>
+                    <span class="tagValues" >{{creditScore.applicationInfo.genesis__Customer_Cash_Used_For__c}}</span>
+                </div>
+                <div class="row" style="clear:both">
+
+                    <input type="text" style="height:40px;width:90%" class="nonBgFInance" ng-model="creditScore.applicationInfo.genesis__Account__r.Description" disabled="disabled"/>
+                </div>
+            </div>
+            <!-- Code Added-->
+            <div class="formDiv" ng-show="creditScore.applicationInfo.RecordType.DeveloperName!='SME_Renewal' ">
+                <div class="header" id="myHeader">
+                    <h4 class='subHeader'>
+                        Customer Request {{dashboardType}}
+                    </h4>
+                </div>
+                <br/>
+
+                <div style="width:100%">
+                    <div style="width:50%;display:inline;float:left" ng-show="creditScore.applicationInfo.RecordType.DeveloperName!='SME_NEW_Loan'">
+                        <div style="width:30%;display:inline;float:left">
+                            <h4 class="tagnames">Reason for Application</h4>
+                        </div>
+                        <div style="width:50%;display:inline">
+                            <span class="tagValues">{{creditScore.applicationInfo.Reason_for_Application__c}}</span>
+                        </div>
+                        <br/>
+                        <br/>
+                        <div ng-if="creditScore.applicationInfo.RecordType.DeveloperName=='SME_Enhancement' || creditScore.applicationInfo.RecordType.DeveloperName=='SME_NEW_Loan' ">
+                            <div style="width:30%;display:inline;float:left">
+                                <h4 class="tagnames">Request Reason</h4>
+                            </div>
+                            <div style="width:50%;display:inline">
+                                <span class="tagValues">{{creditScore.applicationInfo.Request_Reason__c}}</span>
+                            </div>
+                            <br/>
+                            <br/>
+                        </div>
+
+
+
+
+                        <div style="width:30%;display:inline;float:left" ng-show="creditScore.applicationInfo.RecordType.DeveloperName=='SME_Exceeding' || creditScore.applicationInfo.RecordType.DeveloperName=='SME_AdHoc'">
+                            <h4 class="tagnames">Days Requested By Customer</h4>
+                        </div>
+                        <div style="width:40%;display:inline" ng-show="creditScore.applicationInfo.RecordType.DeveloperName=='SME_Exceeding' || creditScore.applicationInfo.RecordType.DeveloperName=='SME_AdHoc'">
+                            <span class="tagValues"> {{creditScore.applicationInfo.EAE_Renewal_Date_in_days__c}}</span>
+                        </div>
+                    </div>
+                    <div style="width:50%;display:inline;float:right">
+                        <div style="width:100%">
+                            <table style='width:100%;table-layout:fixed;'>
+                                <thead>
+                                <tr class="rowsHistory">
+                                    <th style="width:20%;border:none">Facility</th>
+                                    <th style="width:20%;border:none" ng-if="creditScore.applicationInfo.RecordType.DeveloperName=='SME_NEW_Loan'">Type</th>
+                                    <th style="width:20%;border:none" ng-if="creditScore.applicationInfo.RecordType.DeveloperName!='SME_NEW_Loan'">Purpose of Facility</th>
+                                    <th style="width:20%;border:none">Limit Requested By Customer</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                <tr class="rowsHistory" ng-repeat="facility in creditScore.facilityList">
+
+                                    <td style="width:20%;">{{facility.CL_Product__r.clcommon__Product_Name__c}}</td>
+                                    <td style="width:20%;" ng-if="creditScore.applicationInfo.RecordType.DeveloperName=='SME_NEW_Loan'">{{facility.NTB_Facility_Type__c}}</td>
+                                    <td style="width:20%;"  ng-if="creditScore.applicationInfo.RecordType.DeveloperName!='SME_NEW_Loan'">{{facility.Purpose_of_Shifting__c}}</td>
+                                    <td style="width:20%;">{{facility.New_Limit_Amount__c}}</td>
+
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <!-- Code Ends here-->
+            <div class="formDiv" ng-hide="creditScore.applicationInfo.RecordType.DeveloperName=='SME_NEW_Loan' && creditScore.applicationInfo.New_to_Business__c && creditScore.applicationInfo.No_of_years_of_operation__c < 1">
+                <div class="header" id="myHeader">
+                    <h4 class='subHeader'>
+                        Credit appraisal
+                    </h4>
+                    <div class="mainTableHeader">
+                        <div class="subHeaderOne">
+                            <div class="" style="width:20%;float:left;">
+                                <h4 style='margin: 13px 0 3px 0;'>
+                                    &nbsp;
+                                </h4>
+                            </div>
+                            <div class="subSubHeader" style="width:29.5%;border-right: 10px solid white;">
+                                <h4>
+                                    Customer Assessment Summary
+                                </h4>
+                            </div>
+                            <div class="subSubHeader" style="width:49.5%;">
+                                <h4>
+                                    Flags
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+                    <table class='historyTable'>
+                        <thead>
+                        <tr class="rowsHistory" align="center">
+                            <th style="width:20%;background: #fff;border:none"></th>
+                            <th ng-class="isriskUser ? 'minWidth':'maxWidth'" >Value</th>
+                            <th style="width:10%;" ng-show="isriskUser">Weight (%)</th>
+                            <th style="width:9.7%;border-right: 10px solid white;" ng-show="isriskUser">Score</th>
+                            <th style="width:15%;">Variable</th>
+                            <th style="width:10%;">Value</th>
+                            <th style="width:10%;">Range</th>
+                            <th style="width:15%;">Comments</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+                <ng-form name='flagValidation'>
+
+                    <div ng-repeat="scores in creditScore.creditScores"  style="float:left;background: #fff;width:100%;" class="rowsHistoryDiv">
+                        <table style='width:100%;table-layout:fixed;'>
+                            <tbody>
+                            <tr class="rowsHistory" align="center">
+                                <td style="width:20%;">{{scores.parentAppraisal}} <span class='arrow' ng-click='showScores($index)' ><i class="arrow right" ng-if='!show[$index]'></i><i class="arrow down" ng-if='show[$index]' style="top:0px"></i></span></td>
+                                <td ng-class="isriskUser ? 'minWidth':'maxWidth'">{{scores.parentvalue}}</td>
+                                <td style="width:10%;" ng-show="isriskUser" >{{scores.parentweight}}</td>
+                                <td style="width:10.1%;border-right: 8px solid white;" ng-show="isriskUser">{{scores.parentScore}}</td>
+                                <td style="width:15%;" ><img style="height:20px" ng-if='isFlags[$index]' src="{!$Resource.flag_image}" /></td>
+                                <td style="width:10%;"></td>
+                                <td style="width:10%;"></td>
+                                <td style="width:15%;"> </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <table style="margin:0px;width:  50%;float:left;border-collapse: collapse;" ng-show='show[$index]'>
+                            <tbody style='background:#f9f8f8;'>
+                            <tr align="center"  class="rowsHistory" ng-repeat='value in scores.childApplicationScore' ng-class="noRowclr">
+                                <td style="width:40%;text-align:right" >{{value.Variable_type__c}}</td>
+                                <td  ng-class="isriskUser ? 'minnWidth':'maxxWidth'">{{value.Application_Value__c}}</td>
+                                <td style="width:20%;" ng-show="isriskUser">{{value.Application_Weight__c}}</td>
+                                <td style="width:20%;border-right: 6px solid white;" ng-show="isriskUser">{{value.Application_Score__c}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <table style="margin:0px;width: 50%;float:right;border-collapse: collapse;" ng-show='show[$index]'  >
+                            <tbody style='background:#f9f8f8;'>
+                            <tr align="center"  class="rowsHistory" ng-repeat='valueFlags in scores.childFlags' >
+                                <td style="width:30%;    border-left: 2px solid white;">{{valueFlags.Variable_type__c}}</td>
+                                <td style="width:20%;" data-ng-class="{'red-background':valueFlags.Threshold_breached__c}">{{valueFlags.Flags_Value__c}}</td>
+
+                                <td style="width:20%;">{{valueFlags.Flags_Range__c}}</td>
+                                <td style="width:30%;" ng-if='valueFlags.Comments__c!=undefined'><textarea type='text' ng-model='valueFlags.Comments__c' ng-readonly='true' style='background:#dbd9da;width:94%; resize:none;'></textarea></td>
+                                <td style="width:30%;" ng-if='valueFlags.Comments__c==undefined'><textarea type='text' name='flag{{$parent.$index}}{{$index}}' ng-model='comments[valueFlags.Id]' style="width:94%; resize:none;" ng-disabled="creditScore.loggedInUser.Designation__c!='BR_MGR_SMALL' && creditScore.loggedInUser.Designation__c!='BR_MGR_MEDIUM' && creditScore.loggedInUser.Designation__c!='BR_MGR_LARGE' && creditScore.loggedInUser.Designation__c!='BR_MGR_VERYLARGE'" ng-required='true'></textarea></td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </ng-form>
+                <div style="border-top: 1px dashed #06946e;clear:both" >
+                    <table style='width:100%;table-layout:fixed;' cellspacing="0" cellpadding="0">
+                        <tbody>
+                        <tr class="rowsHistory" align="center">
+                            <td style="width:50%;border:0px;text-align:right" >Overall : </td>
+                            <td style="width:50%;border:0px;text-align:left" ng-class="Overall_score__c < creditScore.applicationInfo.Overall_Score__c?'greenFont' :  'redFont'">{{creditScore.applicationInfo.Overall_Score__c}}</td>
+
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+                <table style="width:50%;table-layout:fixed;font-size:14px">
+                    <tr>
+                        <td style="padding:5px" >Pending pre-renewal list
+                            <span class="arrow" ng-click="showPendingRenewal()">
+                                        <i class="arrow right" ng-show='obj.showPRA'></i>
+                                        <i class="arrow down" ng-show='!obj.showPRA' ></i>
+                                    </span>
+                        </td>
+
+                    </tr>
+                    <tr  ng-show="!obj.showPRA" >
+                        <td >
+                            <table style="width:100%">
+                                <tr style="display:block;clear:both;width:100%;border-bottom:2px solid #fff" ng-repeat=" option in creditScore.pendingPreRenewalList">
+                                    <td style="padding:4px 8px;font-size:11px"> {{option}}</td>
+
+                                </tr>
+                            </table>
+                        </td>
+
+                    </tr>
+                </table>
+
+
+            </div>
+            <div ng-show="creditScore.applicationInfo.RecordType.DeveloperName=='SME_NEW_Loan' && creditScore.applicationInfo.New_to_Business__c && creditScore.applicationInfo.No_of_years_of_operation__c < 1 ">
+                <!--ng-show="sancProcess.isNewDashboardNeeded == true && creditScore.applicationInfo.RecordType.DeveloperName=='SME_NEW_Loan' && creditScore.applicationInfo.New_to_Business__c "-->
+                <br/>
+                <br/>
+                <form>
+
+
+                    <label for="Company">Company Profile</label>
+                    <textarea class="textAreaStyle" type="text" id="Company" name="firstname" placeholder="" ng-model="creditScore.applicationInfo.Company_Profile__c"></textarea>
+
+                    <label for="Management">Key Management Profile</label>
+                    <textarea class="textAreaStyle" type="text" id="Management" name="Management" placeholder="" ng-model="creditScore.applicationInfo.Key_Management_Profile__c">
+                            </textarea>
+                    <label for="Beuro">Bureau Profile</label>
+                    <textarea class="textAreaStyle" type="text" id="Beuro" name="Bureau" placeholder="" ng-model="creditScore.applicationInfo.Beuro_Profile__c">
+                            </textarea>
+                    <label for="Market">Market Profile</label>
+                    <textarea class="textAreaStyle" type="text" id="Market" name="Market" placeholder="" ng-model="creditScore.applicationInfo.Market_Profile__c">
+                            </textarea>
+                </form>
+                <div class="searchRow" align="center"  style="margin-bottom: 20px;margin-top: -5px;">
+
+                    <input type="button" value="Save Profile Info"  class="escButtons" ng-click="saveProfileDataForNewSourcing();" />
+
+                </div>
+
+            </div>
+        </fieldset>
+
+        <br/>
+        <div ng-show="creditScore.applicationInfo.RecordType.DeveloperName=='SME_AdHoc'" >
+
+            <h4 class='subHeader'>
+                No Of  Days
+            </h4>
+            <br/>
+
+            <div style="display:inline;margin-left:2%" >
+                <b> {{BMRole}} Recommendation</b>
+                <input type="number"  ng-model="BMNoOfDaysRecom"   ng-disabled="!sancProcess.isEmeBMReviewer" />
+            </div>
+            <div style="display:inline;margin-left:2%" ng-show="HigherAuthRole!=''">
+                <b> {{HigherAuthRole}} Recommendation</b>
+                <input type="number" ng-model="HigherAuthNoOfDaysRecom" ng-disabled="! sancProcess.isFinalAuhtority"/>
+            </div>
+
+
+            <!--<div style="display:inline;margin-left:2%">
+<b>Requested By Customer </b>
+<input type="number" ng-disabled="true" ng-model="creditScore.applicationInfo.EAE_Renewal_Date_in_days__c"/>
+</div>-->
+
+
+
+            <br/>
+
+        </div>
+        <br/>
+        <br/>
+
+        <fieldSet ng-disabled="facilityFIeldSet">
+
+
+            <table  class="dynamicTable borderTable" cellspacing="0" cellpadding="0" border="0" style="">
+                <tbody style="background:transparent">
+                <tr  class="rowsHistory whiteBorder" align="center" style="background: rgb(0,176,240);color:#fff">
+
+                    <td style="font-size:11pt;height:37px;background: rgb(0,176,240);color:#fff;padding:8px 0px">Facility</td>
+                    <td style="padding:2px 0px">
+                        <span style='width:100%;float: left;border-bottom: 1px solid #eee;font-size:12pt'>Existing</span><br/>
+                        <span style="width:19%;float: left;border-right: 1px solid #eee;font-size:10pt;height:30px" ng-hide="creditScore.applicationInfo.RecordType.DeveloperName=='SME_NEW_Loan'">Limit(In Rs)</span>
+                        <span style='width:19%;float: left;border-right: 1px solid #eee;font-size:10pt;height:30px' ng-hide="creditScore.applicationInfo.RecordType.DeveloperName=='SME_NEW_Loan'" >Processing Fee(%)</span>
+                        <span style="width:19%;float: left;border-right: 1px solid #eee;font-size:10pt;;height:30px" ng-hide="creditScore.applicationInfo.RecordType.DeveloperName=='SME_NEW_Loan'">Margin(%)</span>
+                        <span style="width:20%;float: left;border-right: 1px solid #eee;font-size:10pt;;height:30px" ng-hide="creditScore.applicationInfo.RecordType.DeveloperName=='SME_NEW_Loan'">Rate/Commision(%)</span>
+                        <span style="width:19%;float: left;font-size:10pt;;height:30px" ng-hide="creditScore.applicationInfo.RecordType.DeveloperName=='SME_NEW_Loan'">Existing Spread (%)</span>
+                    </td>
+                    <td style="padding:2px 0px">
+                        <span style='width:100%;float: left;border-bottom: 1px solid #eee;font-size:12pt'>BRE</span><br/>
+                        <span style="width:19%;float: left;border-right: 1px solid #eee;font-size:10pt;height:30px" >Limit(In Rs)</span>
+                        <span style='width:19%;float: left;border-right: 1px solid #eee;font-size:10pt;height:30px' >Processing Fee(%)</span>
+                        <span style="width:19%;float: left;border-right: 1px solid #eee;font-size:10pt;;height:30px" >Margin(%)</span>
+                        <span style="width:20%;float: left;border-right: 1px solid #eee;font-size:10pt;;height:30px" >Rate/Commision(%)</span>
+                        <span style="width:19%;float: left;font-size:10pt;;height:30px" >BRE Spread (%)</span>
+                    </td>
+                    <td style="padding:2px 0px" ng-repeat="role in roles | orderBy : 'orderRole'">
+                        <span style='width:100%;float: left;border-bottom: 1px solid #eee;font-size:12pt'>{{role.name}} - recommendation</span><br/>
+                        <span style="width:19%;float: left;border-right: 1px solid #eee;font-size:10pt;height:30px">Limit(In Rs)</span>
+                        <span style='width:19%;float: left;border-right: 1px solid #eee;font-size:10pt;height:30px'>Processing Fee(%)</span>
+                        <span style="width:19%;float: left;border-right: 1px solid #eee;font-size:10pt;height:30px">Margin(%)</span>
+                        <span style="width:20%;float: left;font-size:10pt;height:30px;border-right: 1px solid #eee;" >Rate/Commision(%)</span>
+                        <span style="width:19%;float: left;font-size:10pt;height:30px" >Recommended Spread (%)</span>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:100%;background:#fff;color:#000;border-right:0px;padding:0px;"><h3 style="margin:10px;font-size:13px">Funded</h3></td>
+
+                </tr>
+                <tr align="center" class="borderSpan" ng-repeat="facility in creditScore.facilityList" style="display:flex;"  ng-if="facility.Type__c=='Funded'">
+                    <td style="font-size:11.5px;padding-top:10px">{{facility.CL_Product__r.clcommon__Product_Name__c}}</td>
+                    <td >
+                                    <span style="width:19%;float:left" ng-hide="creditScore.applicationInfo.RecordType.DeveloperName=='SME_NEW_Loan'">
+                                       {{facility.Existing_Limit__c}}</span>
+                        <span style="width:19%" ng-hide="creditScore.applicationInfo.RecordType.DeveloperName=='SME_AdHoc' || creditScore.applicationInfo.RecordType.DeveloperName=='SME_NEW_Loan' ">
+                                        {{facility.Existing_Processing_Charge__c}}
+                                    </span>
+                        <span style="width:19%" ng-show="facility.CL_Product__r.Facility_Category__c.indexOf('OCC') >= 0 && creditScore.applicationInfo.RecordType.DeveloperName!='SME_NEW_Loan' " >
+
+                                        <span>
+                                            {{facility.Existing_Margin_Receivables__c}}
+                                            <span class="tooltip tooltip-top" style="float: none;" help="Margin Receivables" >
+                                            </span>
+
+                                        </span>
+                                        <span ng-show="(facility.Application__r.genesis__Account__r.Industry_Type__c =='Trading') || (facility.Application__r.genesis__Account__r.Industry_Type__c =='TRADING')">
+                                            {{facility.Existing_Margin_Stock_Trading__c }}
+                                            <span class="tooltip tooltip-top" style="float: none;" help="Margin Trading" ng-show="(facility.Application__r.genesis__Account__r.Industry_Type__c =='Trading') || (facility.Application__r.genesis__Account__r.Industry_Type__c =='TRADING')">
+                                            </span>
+
+                                        </span>
+                                        <span ng-show="(facility.Application__r.genesis__Account__r.Industry_Type__c =='Manufacturing') || (facility.Application__r.genesis__Account__r.Industry_Type__c =='MANUFACTURING')">
+                                            {{facility.Existing_Margin_Stock_Manufacturing__c }}
+                                            <span class="tooltip tooltip-top" style="float: none;" help="Margin Manufacturing" ng-show="(facility.Application__r.genesis__Account__r.Industry_Type__c =='Manufacturing') || (facility.Application__r.genesis__Account__r.Industry_Type__c =='Manufacturing')">
+                                            </span>
+                                        </span>
+
+                                    </span>
+                        <span style="width:20%" ng-show="facility.CL_Product__r.Facility_Category__c.indexOf('OCC') < 0 && creditScore.applicationInfo.RecordType.DeveloperName!='SME_NEW_Loan' ">
+                                        {{facility.Approved_Margin__c}}
+
+                                    </span>
+                        <span style="width:19%" ng-show="creditScore.applicationInfo.RecordType.DeveloperName=='SME_AdHoc'">
+                                        <span class="tooltip tooltip-top" style="float: left;" help="Rate is plus 3" >
+                                             {{facility.Existing_Spread__c + facility.MCLR_Rate__c+3}}
+                                        </span>
+                                    </span>
+                        <span style="width:19%" ng-show="creditScore.applicationInfo.RecordType.DeveloperName=='SME_Enhancement' && creditScore.applicationInfo.RecordType.DeveloperName!='SME_NEW_Loan' ">
+                                        {{facility.Existing_Spread__c + facility.MCLR_Rate__c}}
+                                    </span>
+                        <span style="width:19%" ng-show="creditScore.applicationInfo.RecordType.DeveloperName!='SME_NEW_Loan' ">
+                                        {{facility.Existing_Spread__c}}
+                                    </span>
+
+
+
+                    </td>
+                    <td >
+                        <ul>
+                            <li style="width:19%;float:left">
+                                {{facility.BRE_Limit__c}}
+                            </li>
+                            <li style="width:19%;" ng-hide="creditScore.applicationInfo.RecordType.DeveloperName=='SME_AdHoc'">
+
+                                {{facility.BRE_Processing_Charge__c}}
+                            </li>
+                            <li style="width:19%;">
+                                {{facility.BRE_Margin__c}}
+                            </li >
+                            <li style="width:19%;">
+                                {{facility.BRE_Rate__c}}
+                            </li >
+                            <li style="width:19%;">
+                                {{facility.BRE_Spread__c}}
+                            </li>
+
+                        </ul>
+                    </td>
+                    <td ng-repeat="fr in facility.Facilities__r.records | orderBy : 'Higher_Authority_Order__c'">
+                                    <span style="width:19%;float:left" >
+                                        <span class="tooltip tooltip-top" style="float: left;" help="Please enter the recommendation for additional limit amount" ng-show="creditScore.applicationInfo.RecordType.DeveloperName=='SME_AdHoc'">
+                                             <!--{{facility.Existing_Spread__c + facility.MCLR_Rate__c+3}}-->
+                                        </span>
+                                        <input type='number' change="word.innerHTML=convertNumberToWords(this.value)"  data-isTakeOver="fr.Takeover__c" data-mclrRate="{{facility.MCLR_Rate__c}}"   ng-disabled='creditScore.loggedInUser.Designation__c!=fr.Role__c || fr.Read_Only_User__c' data-clproduct="{{facility.CL_Product__c}}"  data-higherAuth="{{fr.Highest_Authority__c}}" data-processingCharge="{{facility.Existing_Processing_Charge__c}}" data-recomendedRate="{{facility.Existing_Spread__c + facility.MCLR_Rate__c + 3}}" data-facilityType="Funded" data-roleSize="{{fr.Higher_Authority_Order__c}}"  data-existingVal="{{facility.Existing_Limit__c}}" ng-value="fr.Recommended_Limit__c" data-id = "{{fr.Id}}" data-apiName="Recommended_Limit__c" data-role="{{fr.Role__c}}" data-facilityName="{{facility.CL_Product__r.clcommon__Product_Name__c}}" data-facilityCategory="{{facility.CL_Product__r.Facility_Category__c}}" data-facility="{{fr.Facility__c}}" data-productType="{{facility.CL_Product__r.Schematic_Loan__c}}" data-initValue="{{facility.Existing_Limit__c}}" data-breLimit="{{facility.BRE_Limit__c}}" data-breMargin="{{facility.BRE_Margin__c}}" data-breMarginRec="{{facility.BRE_Margin_Receivables__c}}" data-breMarginSto="{{facility.BRE_Margin_Stock_Manufacturing__c}}" data-breMarginStoTrad="{{facility.BRE_Margin_Stock_Trading__c}}" data-breMarginProcess="{{facility.BRE_Processing_Charge__c}}" data-breRate="{{facility.BRE_Rate__c}}" data-breSpread="{{facility.BRE_Spread__c}}" ng-blur="getChangeFacility($event)"  style='width:75%;margin:2px'/>
+
+                                    </span>
+                        <span style="width:19%;float:left" ng-hide="creditScore.applicationInfo.RecordType.DeveloperName=='SME_AdHoc' || creditScore.applicationInfo.RecordType.DeveloperName=='SME_Enhancement'">
+                                        <input type='number' data-isTakeOver="fr.Takeover__c" ng-disabled="creditScore.loggedInUser.Designation__c!=fr.Role__c || fr.Read_Only_User__c || sancProcess.isLimitEditable" data-clproduct="{{facility.CL_Product__c}}"   data-facilityType="Funded" data-roleSize="{{fr.Higher_Authority_Order__c}}" data-existingVal="{{facility.Existing_Processing_Charge__c}}" data-mclrRate="{{facility.MCLR_Rate__c}}"   ng-value="{{fr.Recommended_Processing_Charge__c}}" data-id = "{{fr.Id}}" data-apiName="Recommended_Processing_Charge__c" data-role="{{fr.Role__c}}" data-facilityName="{{facility.CL_Product__r.clcommon__Product_Name__c}}" data-facilityCategory="{{facility.CL_Product__r.Facility_Category__c}}" data-facility="{{fr.Facility__c}}" data-productType="{{facility.CL_Product__r.Schematic_Loan__c}}" data-initValue="{{facility.Recommended_Processing_Charge__c}}" data-breLimit="{{facility.BRE_Limit__c}}" data-breMargin="{{facility.BRE_Margin__c}}" data-breMarginRec="{{facility.BRE_Margin_Receivables__c}}" data-breMarginSto="{{facility.BRE_Margin_Stock_Manufacturing__c}}" data-breMarginStoTrad="{{facility.BRE_Margin_Stock_Trading__c}}" data-breMarginProcess="{{facility.BRE_Processing_Charge__c}}" data-breRate="{{facility.BRE_Rate__c}}" data-breSpread="{{facility.BRE_Spread__c}}" ng-blur="getChangeFacility($event)"  style='width:90%;margin:2px'/>
+                                    </span>
+                        <span style="width:19%;float: left;text-align:right" ng-show = "creditScore.applicationInfo.RecordType.DeveloperName=='SME_Enhancement'">
+                             <input  type='number' data-isTakeOver="fr.Takeover__c" ng-disabled="creditScore.loggedInUser.Designation__c!=fr.Role__c || fr.Read_Only_User__c || sancProcess.isLimitEditable" data-clproduct="{{facility.CL_Product__c}}"   data-facilityType="Funded" data-roleSize="{{fr.Higher_Authority_Order__c}}" data-existingVal="{{facility.Existing_Processing_Charge__c}}" data-mclrRate="{{facility.MCLR_Rate__c}}"   ng-value="{{facility.Existing_Processing_Charge__c}}" data-id = "{{fr.Id}}" data-apiName="Recommended_Processing_Charge__c" data-role="{{fr.Role__c}}" data-facilityName="{{facility.CL_Product__r.clcommon__Product_Name__c}}" data-facilityCategory="{{facility.CL_Product__r.Facility_Category__c}}" data-facility="{{fr.Facility__c}}" data-productType="{{facility.CL_Product__r.Schematic_Loan__c}}" data-initValue="{{facility.Recommended_Processing_Charge__c}}" data-breLimit="{{facility.BRE_Limit__c}}" data-breMargin="{{facility.BRE_Margin__c}}" data-breMarginRec="{{facility.BRE_Margin_Receivables__c}}" data-breMarginSto="{{facility.BRE_Margin_Stock_Manufacturing__c}}" data-breMarginStoTrad="{{facility.BRE_Margin_Stock_Trading__c}}" data-breMarginProcess="{{facility.BRE_Processing_Charge__c}}" data-breRate="{{facility.BRE_Rate__c}}" data-breSpread="{{facility.BRE_Spread__c}}" ng-blur="getChangeFacility($event)"  style='width:43%;margin:2px;display:inline'/>
+							<span class="tooltip tooltip-top" >
+                                        </span>
+                            <input  type='number' data-isTakeOver="fr.Takeover__c" ng-disabled="creditScore.loggedInUser.Designation__c!=fr.Role__c || fr.Read_Only_User__c || sancProcess.isLimitEditable" data-clproduct="{{facility.CL_Product__c}}"   data-facilityType="Funded" data-roleSize="{{fr.Higher_Authority_Order__c}}" data-existingVal="{{facility.Existing_Processing_Charge__c}}" data-mclrRate="{{facility.MCLR_Rate__c}}"   ng-value="{{fr.Recommended_Processing_Charge__c}}" data-id = "{{fr.Id}}" data-apiName="Recommended_Processing_Charge__c" data-role="{{fr.Role__c}}" data-facilityName="{{facility.CL_Product__r.clcommon__Product_Name__c}}" data-facilityCategory="{{facility.CL_Product__r.Facility_Category__c}}" data-facility="{{fr.Facility__c}}" data-productType="{{facility.CL_Product__r.Schematic_Loan__c}}" data-initValue="{{facility.Recommended_Processing_Charge__c}}" data-breLimit="{{facility.BRE_Limit__c}}" data-breMargin="{{facility.BRE_Margin__c}}" data-breMarginRec="{{facility.BRE_Margin_Receivables__c}}" data-breMarginSto="{{facility.BRE_Margin_Stock_Manufacturing__c}}" data-breMarginStoTrad="{{facility.BRE_Margin_Stock_Trading__c}}" data-breMarginProcess="{{facility.BRE_Processing_Charge__c}}" data-breRate="{{facility.BRE_Rate__c}}" data-breSpread="{{facility.BRE_Spread__c}}" ng-blur="getChangeFacility($event)"  style='width:43%;margin:-2px;display:inline'/>
+							<span class="tooltip tooltip-top" >
+                                        </span>
+                        </span>
+                        <span style="width:19%;float: left;text-align:right" ng-show="facility.CL_Product__r.Facility_Category__c.indexOf('OCC') >= 0">
+                                        <input type='number' data-isTakeOver="fr.Takeover__c" ng-disabled='creditScore.loggedInUser.Designation__c!=fr.Role__c || fr.Read_Only_User__c || sancProcess.isLimitEditable' data-clproduct="{{facility.CL_Product__c}}"   data-facilityType="Funded" data-roleSize="{{fr.Higher_Authority_Order__c}}" data-existingVal="{{facility.Existing_Margin_Receivables__c}}" data-mclrRate="{{facility.MCLR_Rate__c}}"   ng-value="{{fr.Margin_Receivables__c}}" data-id = "{{fr.Id}}" data-apiName="Margin_Receivables__c" data-role="{{fr.Role__c}}" data-facilityName="{{facility.CL_Product__r.clcommon__Product_Name__c}}" data-facilityCategory="{{facility.CL_Product__r.Facility_Category__c}}" data-facility="{{fr.Facility__c}}" data-productType="{{facility.CL_Product__r.Schematic_Loan__c}}" data-initValue="{{facility.Margin_Receivables__c}}" data-breLimit="{{facility.BRE_Limit__c}}" data-breMargin="{{facility.BRE_Margin__c}}" data-breMarginRec="{{facility.BRE_Margin_Receivables__c}}" data-breMarginSto="{{facility.BRE_Margin_Stock_Manufacturing__c}}" data-breMarginStoTrad="{{facility.BRE_Margin_Stock_Trading__c}}" data-breMarginProcess="{{facility.BRE_Processing_Charge__c}}" data-breRate="{{facility.BRE_Rate__c}}" data-breSpread="{{facility.BRE_Spread__c}}" ng-blur="getChangeFacility($event)"  style='float:left' ng-class="facility.CL_Product__r.Facility_Category__c.indexOf('OCC') >= 0 ?'bgFinance':'nonBgFInance'"/>
+                                        <span class="tooltip tooltip-top" help="Margin-Recievables">
+                                        </span>
+
+                                        <input type='number' data-isTakeOver="fr.Takeover__c" ng-show="(facility.Application__r.genesis__Account__r.Industry_Type__c =='Manufacturing') || (facility.Application__r.genesis__Account__r.Industry_Type__c =='MANUFACTURING')" data-clproduct="{{facility.CL_Product__c}}"   data-facilityType="Funded" data-roleSize="{{fr.Higher_Authority_Order__c}}" data-mclrRate="{{facility.MCLR_Rate__c}}"   ng-disabled='creditScore.loggedInUser.Designation__c!=fr.Role__c || fr.Read_Only_User__c || sancProcess.isLimitEditable' data-existingVal="{{facility.Existing_Margin_Stock_Manufacturing__c}}" ng-value="{{fr.Margin_Stock_Manufacturing__c}}" data-id = "{{fr.Id}}" data-apiName="Margin_Stock_Manufacturing__c" data-role="{{fr.Role__c}}" data-productType="{{facility.CL_Product__r.Schematic_Loan__c}}" data-facilityName="{{facility.CL_Product__r.clcommon__Product_Name__c}}" data-facilityCategory="{{facility.CL_Product__r.Facility_Category__c}}" data-breLimit="{{facility.BRE_Limit__c}}" data-breMargin="{{facility.BRE_Margin__c}}" data-breMarginRec="{{facility.BRE_Margin_Receivables__c}}" data-breMarginSto="{{facility.BRE_Margin_Stock_Manufacturing__c}}" data-breMarginStoTrad="{{facility.BRE_Margin_Stock_Trading__c}}" data-breMarginProcess="{{facility.BRE_Processing_Charge__c}}" data-breRate="{{facility.BRE_Rate__c}}" data-breSpread="{{facility.BRE_Spread__c}}" data-facility="{{fr.Facility__c}}" data-initValue="{{facility.Margin_Stock_Manufacturing__c}}" ng-blur="getChangeFacility($event)"  style='float:left' ng-class="facility.CL_Product__r.Facility_Category__c.indexOf('OCC') >= 0 ?'bgFinance':'nonBgFInance'"/>
+                                        <span class="tooltip tooltip-top" help="Margin-Stock Manufacturing" ng-show="(facility.Application__r.genesis__Account__r.Industry_Type__c =='Manufacturing') || (facility.Application__r.genesis__Account__r.Industry_Type__c =='MANUFACTURING')">
+                                        </span>
+                                        <input type='number' data-isTakeOver="fr.Takeover__c" ng-show="(facility.Application__r.genesis__Account__r.Industry_Type__c =='Trading') || (facility.Application__r.genesis__Account__r.Industry_Type__c =='TRADING')" data-clproduct="{{facility.CL_Product__c}}"   data-facilityType="Funded" data-roleSize="{{fr.Higher_Authority_Order__c}}" ng-disabled='creditScore.loggedInUser.Designation__c!=fr.Role__c || fr.Read_Only_User__c || sancProcess.isLimitEditable' data-mclrRate="{{facility.MCLR_Rate__c}}"   data-existingVal="{{facility.Existing_Margin_Stock_Trading__c}}" ng-value="{{fr.Margin_Stock_Trading__c}}" data-id = "{{fr.Id}}" data-apiName="Margin_Stock_Trading__c" data-role="{{fr.Role__c}}" data-productType="{{facility.CL_Product__r.Schematic_Loan__c}}" data-facilityName="{{facility.CL_Product__r.clcommon__Product_Name__c}}" data-breLimit="{{facility.BRE_Limit__c}}" data-breMargin="{{facility.BRE_Margin__c}}" data-breMarginRec="{{facility.BRE_Margin_Receivables__c}}" data-breMarginSto="{{facility.BRE_Margin_Stock_Manufacturing__c}}" data-breMarginStoTrad="{{facility.BRE_Margin_Stock_Trading__c}}" data-breMarginProcess="{{facility.BRE_Processing_Charge__c}}" data-breRate="{{facility.BRE_Rate__c}}" data-breSpread="{{facility.BRE_Spread__c}}" data-facilityCategory="{{facility.CL_Product__r.Facility_Category__c}}" data-facility="{{fr.Facility__c}}" data-initValue="{{facility.Margin_Stock_Trading__c}}" ng-blur="getChangeFacility($event)"  style='float:left' ng-class="facility.CL_Product__r.Facility_Category__c.indexOf('OCC') >= 0 ?'bgFinance':'nonBgFInance'"/>
+                                        <span class="tooltip tooltip-top" help="Margin-Stock Trading" ng-show="(facility.Application__r.genesis__Account__r.Industry_Type__c =='Trading') || (facility.Application__r.genesis__Account__r.Industry_Type__c =='TRADING')">
+                                        </span>
+                                    </span>
+                        <span style="width:19%;float: left;text-align:right" ng-show="facility.CL_Product__r.Facility_Category__c.indexOf('OCC') < 0">
+                                        <input type='number' data-isTakeOver="fr.Takeover__c" ng-disabled='creditScore.loggedInUser.Designation__c!=fr.Role__c || fr.Read_Only_User__c || sancProcess.isLimitEditable' data-clproduct="{{facility.CL_Product__c}}"   data-facilityType="Funded" data-roleSize="{{fr.Higher_Authority_Order__c}}" data-existingVal="{{facility.Approved__Margin__c}}" ng-value="{{fr.Margin__c}}" data-mclrRate="{{facility.MCLR_Rate__c}}"   data-id = "{{fr.Id}}" data-apiName="Margin__c" data-role="{{fr.Role__c}}" data-facilityName="{{facility.CL_Product__r.clcommon__Product_Name__c}}" data-facilityCategory="{{facility.CL_Product__r.Facility_Category__c}}" data-facility="{{fr.Facility__c}}" data-productType="{{facility.CL_Product__r.Schematic_Loan__c}}" data-initValue="{{facility.Margin__c}}" ng-blur="getChangeFacility($event)" data-breLimit="{{facility.BRE_Limit__c}}" data-breMargin="{{facility.BRE_Margin__c}}" data-breMarginRec="{{facility.BRE_Margin_Receivables__c}}" data-breMarginSto="{{facility.BRE_Margin_Stock_Manufacturing__c}}" data-breMarginStoTrad="{{facility.BRE_Margin_Stock_Trading__c}}" data-breMarginProcess="{{facility.BRE_Processing_Charge__c}}" data-breRate="{{facility.BRE_Rate__c}}" data-breSpread="{{facility.BRE_Spread__c}}"  style='float:left' ng-class="facility.CL_Product__r.Facility_Category__c.indexOf('OCC') >= 0 ?'bgFinance':'nonBgFInance'"/>
+                                    </span>
+
+                        <span style="width:19%;text-align:right">
+                                        <div ng-show="creditScore.applicationInfo.RecordType.DeveloperName=='SME_Enhancement' || creditScore.applicationInfo.RecordType.DeveloperName=='SME_NEW_Loan'">
+                                            <input type='number' data-isTakeOver="fr.Takeover__c" ng-disabled="!sancProcess.isSaveOperationDone || creditScore.loggedInUser.Designation__c!=fr.Role__c || fr.Read_Only_User__c || sancProcess.isLimitEditable"  data-clproduct="{{facility.CL_Product__c}}"   data-facilityType="Funded" data-roleSize="{{fr.Higher_Authority_Order__c}}" data-existingVal="{{facility.Existing_Spread__c + facility.MCLR_Rate__c}}" data-mclrRate="{{facility.MCLR_Rate__c}}"    ng-value="fr.Recommended_Rate__c" data-id = "{{fr.Id}}" data-apiName="Recommended_Rate__c" data-role="{{fr.Role__c}}" data-facilityName="{{facility.CL_Product__r.clcommon__Product_Name__c}}" data-facilityCategory="{{facility.CL_Product__r.Facility_Category__c}}" data-facility="{{fr.Facility__c}}" data-productType="{{facility.CL_Product__r.Schematic_Loan__c}}" data-initValue="{{facility.Existing_Spread__c + facility.MCLR_Rate__c}}" ng-blur="getChangeFacility($event)" data-breLimit="{{facility.BRE_Limit__c}}" data-breMargin="{{facility.BRE_Margin__c}}" data-breMarginRec="{{facility.BRE_Margin_Receivables__c}}" data-breMarginSto="{{facility.BRE_Margin_Stock_Manufacturing__c}}" data-breMarginStoTrad="{{facility.BRE_Margin_Stock_Trading__c}}" data-breMarginProcess="{{facility.BRE_Processing_Charge__c}}" data-breRate="{{facility.BRE_Rate__c}}" data-breSpread="{{facility.BRE_Spread__c}}" style='width:90%;margin:2px'/>
+                                        </div>
+                                        <div ng-show="creditScore.applicationInfo.RecordType.DeveloperName=='SME_AdHoc'">
+                                            <input type='number' ng-disabled="true" data-clproduct="{{facility.CL_Product__c}}"   data-facilityType="Funded" data-roleSize="{{fr.Higher_Authority_Order__c}}" data-existingVal="{{facility.BRE_Rate__c}}" data-mclrRate="{{facility.MCLR_Rate__c}}"  ng-value="fr.Recommended_Rate__c" data-id = "{{fr.Id}}" data-apiName="Recommended_Rate__c" data-role="{{fr.Role__c}}" data-facilityName="{{facility.CL_Product__r.clcommon__Product_Name__c}}" data-facilityCategory="{{facility.CL_Product__r.Facility_Category__c}}" data-facility="{{fr.Facility__c}}" data-productType="{{facility.CL_Product__r.Schematic_Loan__c}}" data-initValue="{{facility.BRE_Rate__c}}" ng-blur="getChangeFacility($event)" data-breLimit="{{facility.BRE_Limit__c}}" data-breMargin="{{facility.BRE_Margin__c}}" data-breMarginRec="{{facility.BRE_Margin_Receivables__c}}" data-breMarginSto="{{facility.BRE_Margin_Stock_Manufacturing__c}}" data-breMarginStoTrad="{{facility.BRE_Margin_Stock_Trading__c}}" data-breMarginProcess="{{facility.BRE_Processing_Charge__c}}" data-breRate="{{facility.BRE_Rate__c}}" data-breSpread="{{facility.BRE_Spread__c}}" style='width:75%!important'/>
+                                            <!--creditScore.loggedInUser.Designation__c!=fr.Role__c || fr.Read_Only_User__c || sancProcess.isLimitEditable-->
+                                        </div>
+                                    </span>
+                        <span style=";width:19%;text-align:right">
+                                        <div ng-show="creditScore.applicationInfo.RecordType.DeveloperName=='SME_Enhancement' || creditScore.applicationInfo.RecordType.DeveloperName=='SME_NEW_Loan'">
+
+                                            <!--<div id="enhancementRecSpread-{{fr.Id}}" >
+                                                {{fr.Recommended_Rate__c}}
+                                            </div>-->
+                                            <input type="number" id="enhancementFundedRecSpread-{{fr.Id}}" ng-value="{{facility.BRE_Spread__c == undefined ? NaN:fr.Recommended_Rate__c-facility.MCLR_Rate__c}}" style='width:90%;margin:2px' disabled="true"/>
+                                        </div>
+                                         <div ng-show="creditScore.applicationInfo.RecordType.DeveloperName=='SME_AdHoc' " ng-disabled="true">
+                                            <input type='number'  ng-disabled="true" ng-value="fr.Recommended_Rate__c -facility.MCLR_Rate__c" id="recSpread" ng-init="facility.Existing_Spread__c + facility.MCLR_Rate__c - fr.Recommended_Rate__c"  data-clproduct="{{facility.CL_Product__c}}"    style='width:90%;margin:2px'/>
+                                        </div>
+                                    </span>
+
+                    </td>
+                    <!--<td style="width:20%;" ><span style="width:50%;float: left;"><input type='text' style='width:90%;margin:4px'/></span><span style="float: left;width:50%;"><input type='text' style='width:90%;margin:4px'/></span></td>-->
+
+
+
+                </tr>
+                <tr>
+                    <td style="width:100%;background:#fff;color:#000;border-right:0px;padding:0px;"><h3 style="margin:10px;font-size:13px">Non Funded</h3></td>
+                </tr>
+
+                <tr align="center" style="display:flex;" class="borderSpan"  ng-repeat="facility in creditScore.facilityList"   ng-if="facility.Type__c=='Non-Funded'">
+                    <td style="font-size:11.5px;padding-top:10px">{{facility.CL_Product__r.clcommon__Product_Name__c}} </td>
+                    <td >
+                                    <span style="width:24%;float:left">
+                                        {{facility.Existing_Limit__c}}</span>
+                        <span style="width:24%" ng-hide="creditScore.applicationInfo.RecordType.DeveloperName=='SME_NEW_Loan' || creditScore.applicationInfo.RecordType.DeveloperName=='SME_AdHoc' ">
+                                        {{facility.Existing_Processing_Charge__c}}
+                                    </span>
+                        <span style="width:24%" ng-if="facility.CL_Product__r.Facility_Category__c.indexOf('OCC') >= 0 " ng-hide="creditScore.applicationInfo.RecordType.DeveloperName=='SME_NEW_Loan'">
+
+                                        <span>
+                                            {{facility.Existing_Margin_Receivables__c}}
+                                        </span>
+                                        <span ng-if="facility.Application__r.genesis__Account__r.Industry_Type__c =='Trading'">
+                                            {{facility.Existing_Margin_Stock_Trading__c }}
+                                        </span>
+                                        <span ng-if="facility.Application__r.genesis__Account__r.Industry_Type__c =='Manufacturing'">
+                                            {{facility.Existing_Margin_Stock_Manufacturing__c }}
+                                        </span>
+
+                                    </span>
+                        <span style="width:24%" ng-if="facility.CL_Product__r.Facility_Category__c.indexOf('OCC') < 0 " ng-hide="creditScore.applicationInfo.RecordType.DeveloperName=='SME_NEW_Loan'">
+                                        {{facility.Approved_Margin__c}}
+                                    </span>
+                        <span style="width:24%" ng-hide="creditScore.applicationInfo.RecordType.DeveloperName=='SME_NEW_Loan'">
+                                        {{facility.Existing_Spread__c + facility.MCLR_Rate__c}}
+                                    </span>
+
+
+                    </td>
+                    <td >
+                        <ul>
+                            <li>
+                                {{facility.BRE_Limit__c}}
+                            </li>
+                            <li ng-hide="creditScore.applicationInfo.RecordType.DeveloperName=='SME_AdHoc'">
+                                {{facility.BRE_Processing_Charge__c}}
+                            </li>
+                            <li>
+                                {{facility.BRE_Margin__c}}
+                            </li>
+                            <li>
+                                {{facility.Existing_Rate__c}}
+                            </li>
+
+                        </ul>
+                    </td>
+
+                    <td ng-repeat="fr in facility.Facilities__r.records | orderBy : 'Higher_Authority_Order__c'">
+                                    <span style="width:24%;float: left;text-align:right">
+                                        <span class="tooltip tooltip-top" style="float: left;display:inline" help="Please enter the recommendation for additional limit amount" ng-show="creditScore.applicationInfo.RecordType.DeveloperName=='SME_AdHoc'">
+                                            <!--{{facility.Existing_Spread__c + facility.MCLR_Rate__c+3}}-->
+                                        </span>
+                                        <input type='number' data-breLimit="{{facility.BRE_Limit__c}}" data-breMargin="{{facility.BRE_Margin__c}}" data-breMarginRec="{{facility.BRE_Margin_Receivables__c}}" data-breMarginSto="{{facility.BRE_Margin_Stock_Manufacturing__c}}" data-breMarginStoTrad="{{facility.BRE_Margin_Stock_Trading__c}}" data-breMarginProcess="{{facility.BRE_Processing_Charge__c}}" data-breRate="{{facility.BRE_Rate__c}}" data-breSpread="{{facility.BRE_Spread__c}}" data-isTakeOver="fr.Takeover__c" data-mclrRate="{{facility.MCLR_Rate__c}}"   ng-disabled='creditScore.loggedInUser.Designation__c!=fr.Role__c || fr.Read_Only_User__c' data-clproduct="{{facility.CL_Product__c}}"  data-processingCharge="{{facility.Existing_Processing_Charge__c}}" data-recomendedRate="{{facility.Existing_Spread__c + facility.MCLR_Rate__c + 3}}"  data-facilityType="Non-Funded" data-roleSize="{{fr.Higher_Authority_Order__c}}" data-productType="{{facility.CL_Product__r.Schematic_Loan__c}}" data-existingVal="{{facility.Existing_Limit__c}}" data-facilityName="{{facility.CL_Product__r.clcommon__Product_Name__c}}" data-facilityCategory="{{facility.CL_Product__r.Facility_Category__c}}" data-higherAuth="{{fr.Highest_Authority__c}}" ng-model="fr.Recommended_Limit__c" data-id = "{{fr.Id}}" data-apiName="Recommended_Limit__c" data-role="{{fr.Role__c}}"  data-facility="{{fr.Facility__c}}" data-initValue="{{facility.Existing_Limit__c}}"   ng-blur="getChangeFacility($event)"  style='width:75%;margin:2px;'/>
+
+
+                                    </span>
+                        <span style="width:24%;float: left;text-align:right" ng-hide="creditScore.applicationInfo.RecordType.DeveloperName=='SME_AdHoc'">
+                                        <input type='number' data-breLimit="{{facility.BRE_Limit__c}}" data-breMargin="{{facility.BRE_Margin__c}}" data-breMarginRec="{{facility.BRE_Margin_Receivables__c}}" data-breMarginSto="{{facility.BRE_Margin_Stock_Manufacturing__c}}" data-breMarginStoTrad="{{facility.BRE_Margin_Stock_Trading__c}}" data-breMarginProcess="{{facility.BRE_Processing_Charge__c}}" data-breRate="{{facility.BRE_Rate__c}}" data-breSpread="{{facility.BRE_Spread__c}}"  data-isTakeOver="fr.Takeover__c" data-mclrRate="{{facility.MCLR_Rate__c}}"   ng-disabled='creditScore.loggedInUser.Designation__c!=fr.Role__c|| fr.Read_Only_User__c || sancProcess.isLimitEditable' data-clproduct="{{facility.CL_Product__c}}"   data-facilityType="Non-Funded" data-roleSize="{{fr.Higher_Authority_Order__c}}" data-productType="{{facility.CL_Product__r.Schematic_Loan__c}}" data-existingVal="{{facility.Existing_Processing_Charge__c}}" data-facilityName="{{facility.CL_Product__r.clcommon__Product_Name__c}}" data-facilityCategory="{{facility.CL_Product__r.Facility_Category__c}}" ng-model="fr.Recommended_Processing_Charge__c" data-id = "{{fr.Id}}" data-apiName="Recommended_Processing_Charge__c" data-role="{{fr.Role__c}}"  data-facility="{{fr.Facility__c}}" data-initValue="{{facility.Recommended_Processing_Charge__c}}"   ng-blur="getChangeFacility($event)"  style='width:90%;margin:2px;'/>
+                                    </span>
+
+
+                        <span style="width:24%;float: left;text-align:right" ng-show="facility.CL_Product__r.Facility_Category__c.indexOf('OCC') >= 0">
+
+                                        <input type='number' data-breLimit="{{facility.BRE_Limit__c}}" data-breMargin="{{facility.BRE_Margin__c}}" data-breMarginRec="{{facility.BRE_Margin_Receivables__c}}" data-breMarginSto="{{facility.BRE_Margin_Stock_Manufacturing__c}}" data-breMarginStoTrad="{{facility.BRE_Margin_Stock_Trading__c}}" data-breMarginProcess="{{facility.BRE_Processing_Charge__c}}" data-breRate="{{facility.BRE_Rate__c}}" data-breSpread="{{facility.BRE_Spread__c}}" data-isTakeOver="fr.Takeover__c" data-mclrRate="{{facility.MCLR_Rate__c}}" ng-disabled='creditScore.loggedInUser.Designation__c!=fr.Role__c || fr.Read_Only_User__c || sancProcess.isLimitEditable' data-clproduct="{{facility.CL_Product__c}}"   data-facilityType="Non-Funded" data-roleSize="{{fr.Higher_Authority_Order__c}}" data-productType="{{facility.CL_Product__r.Schematic_Loan__c}}" data-existingVal="{{facility.Existing_Margin_Receivables__c}}" ng-value="fr.Margin_Receivables__c" data-id = "{{fr.Id}}" data-apiName="Margin_Receivables__c" data-role="{{fr.Role__c}}" data-facilityName="{{facility.CL_Product__r.clcommon__Product_Name__c}}" data-facilityCategory="{{facility.CL_Product__r.Facility_Category__c}}" data-facility="{{fr.Facility__c}}" data-initValue="{{facility.Margin_Receivables__c}}" ng-blur="getChangeFacility($event)"  style='float:left' ng-class="facility.CL_Product__r.Facility_Category__c.indexOf('OCC') >= 0 ?'bgFinance':'nonBgFInance'"/>
+                                        <span class="tooltip tooltip-top" help="OCC Facility Margin Recievables">
+
+                                        </span>
+
+                                        <input type='number' data-breLimit="{{facility.BRE_Limit__c}}" data-breMargin="{{facility.BRE_Margin__c}}" data-breMarginRec="{{facility.BRE_Margin_Receivables__c}}" data-breMarginSto="{{facility.BRE_Margin_Stock_Manufacturing__c}}" data-breMarginStoTrad="{{facility.BRE_Margin_Stock_Trading__c}}" data-breMarginProcess="{{facility.BRE_Processing_Charge__c}}" data-breRate="{{facility.BRE_Rate__c}}" data-breSpread="{{facility.BRE_Spread__c}}" data-isTakeOver="fr.Takeover__c" data-mclrRate="{{facility.MCLR_Rate__c}}"  ng-show="(facility.Application__r.genesis__Account__r.Industry_Type__c =='Manufacturing') || (facility.Application__r.genesis__Account__r.Industry_Type__c =='MANUFACTURING')" data-clproduct="{{facility.CL_Product__c}}"    ng-disabled='creditScore.loggedInUser.Designation__c!=fr.Role__c || fr.Read_Only_User__c || sancProcess.isLimitEditable' data-facilityType="Non-Funded" data-roleSize="{{fr.Higher_Authority_Order__c}}" data-productType="{{facility.CL_Product__r.Schematic_Loan__c}}" data-existingVal="{{facility.Existing_Margin_Stock_Manufacturing__c}}" ng-value="{{fr.Margin_Stock_Manufacturing__c}}" data-id = "{{fr.Id}}" data-apiName="Margin_Stock_Manufacturing__c " data-role="{{fr.Role__c}}" data-facilityName="{{facility.CL_Product__r.clcommon__Product_Name__c}}" data-facilityCategory="{{facility.CL_Product__r.Facility_Category__c}}" data-facility="{{fr.Facility__c}}" data-initValue="{{facility.Margin_Stock_Manufacturing__c }}" ng-blur="getChangeFacility($event)"  style='float:left' ng-class="facility.CL_Product__r.Facility_Category__c.indexOf('OCC') >= 0 ?'bgFinance':'nonBgFInance'"/>
+                                        <span class="tooltip tooltip-top" help="OCC Margin Stock Manifacturing" ng-show="(facility.Application__r.genesis__Account__r.Industry_Type__c =='Manufacturing') || (facility.Application__r.genesis__Account__r.Industry_Type__c =='MANUFACTURING')">
+                                        </span>
+                                        <input type='number' data-breLimit="{{facility.BRE_Limit__c}}" data-breMargin="{{facility.BRE_Margin__c}}" data-breMarginRec="{{facility.BRE_Margin_Receivables__c}}" data-breMarginSto="{{facility.BRE_Margin_Stock_Manufacturing__c}}" data-breMarginStoTrad="{{facility.BRE_Margin_Stock_Trading__c}}" data-breMarginProcess="{{facility.BRE_Processing_Charge__c}}" data-breRate="{{facility.BRE_Rate__c}}" data-breSpread="{{facility.BRE_Spread__c}}" data-isTakeOver="fr.Takeover__c" data-mclrRate="{{facility.MCLR_Rate__c}}" ng-show="facility.Application__r.genesis__Account__r.Industry_Type__c =='Trading'" data-clproduct="{{facility.CL_Product__c}}"   data-facilityType="Non-Funded" data-roleSize="{{fr.Higher_Authority_Order__c}}" data-productType="{{facility.CL_Product__r.Schematic_Loan__c}}" data-existingVal="{{facility.Existing_Margin_Stock_Trading__c}}" ng-disabled='creditScore.loggedInUser.Designation__c!=fr.Role__c || fr.Read_Only_User__c || sancProcess.isLimitEditable' ng-value="{{fr.Margin_Stock_Trading__c}}" data-id = "{{fr.Id}}" data-apiName="Margin_Stock_Trading__c" data-role="{{fr.Role__c}}" data-facilityName="{{facility.CL_Product__r.clcommon__Product_Name__c}}" data-facility="{{fr.Facility__c}}" data-facilityCategory="{{facility.CL_Product__r.Facility_Category__c}}" data-initValue="{{facility.Margin_Stock_Trading__c}}" ng-blur="getChangeFacility($event)"  style='float:left' ng-class="facility.CL_Product__r.Facility_Category__c.indexOf('OCC') >= 0 ?'bgFinance':'nonBgFInance'"/>
+                                        <span class="tooltip tooltip-top" help="OCC Margin Stock Tradin" ng-show="(facility.Application__r.genesis__Account__r.Industry_Type__c =='Trading') || (facility.Application__r.genesis__Account__r.Industry_Type__c =='TRADING')">
+                                        </span>
+                                    </span>
+
+
+
+
+                        <span style="width:24%;float: left;text-align:right" ng-show="facility.CL_Product__r.Facility_Category__c.indexOf('OCC') < 0">
+                                        <input type='number' data-breLimit="{{facility.BRE_Limit__c}}" data-breMargin="{{facility.BRE_Margin__c}}" data-breMarginRec="{{facility.BRE_Margin_Receivables__c}}" data-breMarginSto="{{facility.BRE_Margin_Stock_Manufacturing__c}}" data-breMarginStoTrad="{{facility.BRE_Margin_Stock_Trading__c}}" data-breMarginProcess="{{facility.BRE_Processing_Charge__c}}" data-breRate="{{facility.BRE_Rate__c}}" data-breSpread="{{facility.BRE_Spread__c}}" data-mclrRate="{{facility.MCLR_Rate__c}}" ng-disabled='creditScore.loggedInUser.Designation__c!=fr.Role__c || fr.Read_Only_User__c || sancProcess.isLimitEditable' data-clproduct="{{facility.CL_Product__c}}"   data-facilityType="Non-Funded" data-roleSize="{{fr.Higher_Authority_Order__c}}" data-productType="{{facility.CL_Product__r.Schematic_Loan__c}}" data-existingVal="{{facility.Approved_Margin__c}}" ng-value="fr.Margin__c" data-id = "{{fr.Id}}" data-apiName="Margin__c" data-role="{{fr.Role__c}}" data-facilityName="{{facility.CL_Product__r.clcommon__Product_Name__c}}" data-facilityCategory="{{facility.CL_Product__r.Facility_Category__c}}" data-facility="{{fr.Facility__c}}" data-initValue="{{facility.Margin__c}}" ng-blur="getChangeFacility($event)"  style='float:left' ng-class="facility.CL_Product__r.Facility_Category__c.indexOf('OCC') >= 0 ?'bgFinance':'nonBgFInance'"/>
+
+                                    </span>
+
+                        <span style="float: right;width:24%;text-align:right">
+                                        <div ng-show="creditScore.applicationInfo.RecordType.DeveloperName=='SME_Enhancement' || creditScore.applicationInfo.RecordType.DeveloperName=='SME_NEW_Loan'">
+                                            <input type='number' data-breLimit="{{facility.BRE_Limit__c}}" data-breMargin="{{facility.BRE_Margin__c}}" data-breMarginRec="{{facility.BRE_Margin_Receivables__c}}" data-breMarginSto="{{facility.BRE_Margin_Stock_Manufacturing__c}}" data-breMarginStoTrad="{{facility.BRE_Margin_Stock_Trading__c}}" data-breMarginProcess="{{facility.BRE_Processing_Charge__c}}" data-breRate="{{facility.BRE_Rate__c}}" data-breSpread="{{facility.BRE_Spread__c}}" data-mclrRate="{{facility.MCLR_Rate__c}}"   data-isTakeOver="fr.Takeover__c" ng-disabled='creditScore.loggedInUser.Designation__c!=fr.Role__c || fr.Read_Only_User__c' data-clproduct="{{facility.CL_Product__c}}"   data-facilityType="Non-Funded" data-roleSize="{{fr.Higher_Authority_Order__c}}" data-productType="{{facility.CL_Product__r.Schematic_Loan__c}}"  data-existingVal="{{facility.Existing_Spread__c + facility.MCLR_Rate__c}}" data-facilityName="{{facility.CL_Product__r.clcommon__Product_Name__c}}" data-facilityCategory="{{facility.CL_Product__r.Facility_Category__c}}" ng-model="fr.Recommended_Rate__c" data-id = "{{fr.Id}}" data-apiName="Recommended_Rate__c" data-role="{{fr.Role__c}}"  data-facility="{{fr.Facility__c}}" data-initValue="{{facility.Existing_Spread__c + facility.MCLR_Rate__c}}" ng-blur="getChangeFacility($event)"  style='width:90%;margin:2px'/>
+                                        </div>
+                                        <div ng-show="creditScore.applicationInfo.RecordType.DeveloperName=='SME_AdHoc'">
+                                            <!--<span class="tooltip tooltip-top" style="float: left;" help="Rate is plus 3" >
+<img class="tooTipImg" src="{!$Resource.question}"/>
+</span>-->
+                                            <input type='number' data-breLimit="{{facility.BRE_Limit__c}}" data-breMargin="{{facility.BRE_Margin__c}}" data-breMarginRec="{{facility.BRE_Margin_Receivables__c}}" data-breMarginSto="{{facility.BRE_Margin_Stock_Manufacturing__c}}" data-breMarginStoTrad="{{facility.BRE_Margin_Stock_Trading__c}}" data-breMarginProcess="{{facility.BRE_Processing_Charge__c}}" data-breRate="{{facility.BRE_Rate__c}}" data-breSpread="{{facility.BRE_Spread__c}}" data-mclrRate="{{facility.MCLR_Rate__c}}"  ng-disabled='creditScore.loggedInUser.Designation__c!=fr.Role__c || fr.Read_Only_User__c || sancProcess.isLimitEditable' data-clproduct="{{facility.CL_Product__c}}"   data-facilityType="Non-Funded" data-roleSize="{{fr.Higher_Authority_Order__c}}" data-productType="{{facility.CL_Product__r.Schematic_Loan__c}}"  data-existingVal="{{facility.BRE_Rate__c}}" data-facilityName="{{facility.CL_Product__r.clcommon__Product_Name__c}}" data-facilityCategory="{{facility.CL_Product__r.Facility_Category__c}}" ng-model="fr.Recommended_Rate__c" data-id = "{{fr.Id}}" data-apiName="Recommended_Rate__c" data-role="{{fr.Role__c}}"  data-facility="{{fr.Facility__c}}" data-initValue="{{facility.BRE_Rate__c}}" ng-blur="getChangeFacility($event)"  style='width:90%;margin:2px'/>
+
+                                        </div>
+                                    </span>
+                    </td>
+
+
+                </tr>
+
+                </tbody>
+            </table>
+        </fieldSet>
+
+        <br/>
+        <fieldset ng-disabled="commentsFieldset && !sancProcess.isSpecialTermsEditable && !sancProcess.isSpecialTermsEditableByDeviation">
+            <div class="formDiv">
+                <div class="leftDiv" style="margin-top: 2%">
+                    <div  ng-show="creditScore.preDisbursementComments.length > 0 ">
+                        <!-- <h4 style='margin: 17px 0 0px 0;display:block'>
+                            Pre - disbersement T &amp; C a:
+                        </h4> -->
+                        <button class="accordion">
+                            <h4 style='margin: 17px 0 0px 0;display:block'>
+                                Pre - disbersement T &amp; C:
+                            </h4>
+                        </button>
+                        <div class="panel">
+                            <div ng-repeat="comments in  creditScore.preDisbursementComments" style='width:100%;float:left;' >
+                                <textarea class="textareaBox" style="margin-top: 5px;width: 94%;clear: bot" ng-model="comments.Terms_and_Conditions__c"  ng-readonly="true"></textarea>
+                                <select style="width:15%;padding: 0px 0px " ng-model="comments.Complied__c"  ng-options="x for x in compliedOptions" ng-disabled="!(sancProcess.isOwner) || sancProcess.isPreDisbersementEnabled"  />
+                                <label for="comment" ng-show="comments.Complied__c=='Yes' || comments.Complied__c =='No'">Reason: </label>
+                                <textarea id="comment" ng-show="comments.Complied__c=='Yes' || comments.Complied__c =='No'" class="textareaBox" style="margin-top: 5px;width: 94%;clear: both;" ng-model="comments.Reason__c"  ng-disabled="!(sancProcess.isOwner) || (sancProcess.isPreDisbersementEnabled) "></textarea>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div  ng-show="isRHA &&(creditScore.preDisbursementComments.length == 0) && !( sancProcess.isFinalAuhtority &&  sancProcess.isEmeBMReviewer) && ! isBMFinalAuthority" style=' margin: 23px 0 3px 0'>
+
+
+                        <button class="accordion">
+                            <h4 style='margin: 17px 0 0px 0;display:block'>
+                                Pre - disbersement T &amp; C
+                                <span class="tooltip tooltip-top" help="{{tandcHelpText}}">
+                                            <img class="tooTipImg" src="{!$Resource.helpTextImg}"/></span>
+                            </h4>
+                        </button>
+                        <div class="panel">
+                            <div ng-repeat="comments in listOfCommentsPreDis track by $index" style='width:100%;float:left;' >
+
+                                <textarea class="textareaBox" style="margin-top: 5px;width: 94%;clear: both;" name="sanctiontc" ng-model="preDisbursementCommentsAndCompliance[$index]"></textarea>
+                                <!--<select ng-model="preDisbursementCommentsAndCompliance[$index].Complied__c" ng-options="x for x in compliedOptions" />-->
+                                <span style="border-radius: 100%;
+                                                     border: 1px solid #eee;
+                                                     background: #e8e8e8;
+                                                     float: left;
+                                                     width: 4%;
+                                                     cursor: pointer;
+                                                     position: relative;
+                                                     " ng-click="decreasePreDis($index)" ng-if="$index!=0"><apex:image url="{!$Resource.minus}" style="width:100%;"/></span>
+
+
+                            </div>
+
+
+                            <div style="float: left;
+                                                width: 100%;
+                                                text-align: right;
+                                                ">
+                                        <span style="border-radius: 100%;
+                                                     border: 1px solid #eee;
+                                                     background: #e8e8e8;
+                                                     float: right;
+                                                     width: 25px;
+                                                     cursor:pointer;
+                                                     " ng-click="increasePreDis()"><apex:image url="{!$Resource.plus}" style="width:100%;"/></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div  ng-show="isRHA &&(creditScore.preDisbursementComments.length == 0) && sancProcess.isFinalAuhtority &&  sancProcess.isEmeBMReviewer && ! isBMFinalAuthority" style=' margin: 23px 0 3px 0'>
+
+
+                        <button class="accordion">
+                            <h4 style='margin: 17px 0 0px 0;display:block'>
+                                Pre - disbersement T &amp; C
+                                <span class="tooltip tooltip-top" help="{{tandcHelpText}}">
+                                            <img class="tooTipImg" src="{!$Resource.helpTextImg}"/></span>
+                            </h4>
+                        </button>
+                        <div class="panel">
+                            <div ng-repeat="comments in listOfCommentsPreDisBM track by $index" style='width:100%;float:left;' >
+
+                                <textarea class="textareaBox" style="margin-top: 5px;width: 94%;clear: both;" name="sanctiontc" ng-model="comments.Terms_and_Conditions__c"></textarea>
+                                <select style="width:15%;padding: 0px 0px " ng-model="comments.Complied__c"  ng-options="x for x in compliedOptions"   />
+                                <label for="comment" ng-show="comments.Complied__c=='Yes' || comments.Complied__c =='No'">Reason: </label>
+                                <textarea id="comment" ng-show="comments.Complied__c=='Yes' || comments.Complied__c =='No'" class="textareaBox" style="margin-top: 5px;width: 94%;clear: both;" ng-model="comments.Reason__c"  ng-disabled="!(sancProcess.isOwner) || (sancProcess.isPreDisbersementEnabled && !sancProcess.isFinalAuhtority)"></textarea>
+
+                                <span style="border-radius: 100%;
+                                                     border: 1px solid #eee;
+                                                     background: #e8e8e8;
+                                                     float: left;
+                                                     width: 4%;
+                                                     cursor: pointer;
+                                                     position: relative;
+                                                     " ng-click="decreasePreDisBM($index)" ng-if="$index!=0"><apex:image url="{!$Resource.minus}" style="width:100%;"/></span>
+
+
+                            </div>
+
+
+                            <div style="float: left;
+                                                width: 100%;
+                                                text-align: right;
+                                                ">
+                                        <span style="border-radius: 100%;
+                                                     border: 1px solid #eee;
+                                                     background: #e8e8e8;
+                                                     float: right;
+                                                     width: 25px;
+                                                     cursor:pointer;
+                                                     " ng-click="increasePreDisBM()"><apex:image url="{!$Resource.plus}" style="width:100%;"/></span>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                    <!--  Code for pre disbursement ends here -->
+                    <div class="" ng-show="creditScore.termsCondtionComments.length > 0 && !sancProcess.isSpecialTermsEditable && !sancProcess.isSpecialTermsEditableByDeviation">
+
+                        <button class="accordion">
+                            <h4 style='margin: 17px 0 0px 0;display:block'>
+                                Special Sanction T &amp; C:
+                            </h4>
+                        </button>
+                        <div class="panel">
+                            <div ng-repeat="comments in creditScore.termsCondtionComments" style='width:100%;float:left;' >
+                                <textarea class="textareaBox" style="margin-top: 5px;width: 94%;clear: both;" ng-model="comments.Terms_and_Conditions__c"  ng-readonly="true"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="" ng-show="(isRHA && (creditScore.termsCondtionComments.length == 0)) || sancProcess.isSpecialTermsEditable || (sancProcess.isSpecialTermsEditableByDeviation)">
+
+                        <button class="accordion">
+                            <h4 style='margin: 17px 0 0px 0;display:block'>
+                                Special Sanction T &amp; C :
+                                <span class="tooltip tooltip-top" help="{{tandcHelpText}}">
+                                            <img class="tooTipImg" src="{!$Resource.helpTextImg}"/>
+                                        </span>
+                            </h4>
+                        </button>
+                        <div class="panel">
+                            <div ng-repeat="comments in listOfComments track by $index" style='width:100%;float:left;' >
+
+                                <textarea class="textareaBox" style="margin-top: 5px;width: 94%;clear: both;" name="sanctiontc" ng-model="termsAndConditions[$index]"></textarea>
+                                <span style="border-radius: 100%;
+                                                     border: 1px solid #eee;
+                                                     background: #e8e8e8;
+                                                     float: left;
+                                                     width: 4%;
+                                                     cursor: pointer;
+                                                     position: relative;
+                                                     " ng-click="decrease($index)" ng-if="$index!=0"><apex:image url="{!$Resource.minus}" style="width:100%;"/></span>
+
+
+                            </div>
+
+
+                            <div style="float: left;
+                                                width: 100%;
+                                                text-align: right;
+                                                ">
+                                        <span style="border-radius: 100%;
+                                                     border: 1px solid #eee;
+                                                     background: #e8e8e8;
+                                                     float: right;
+                                                     width: 25px;
+                                                     cursor:pointer;
+                                                     " ng-click="increase()"><apex:image url="{!$Resource.plus}" style="width:100%;"/></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="rightDiv">
+
+
+                    <div>
+                        <div id="word"></div>
+                        <h4 style=' margin: 23px 0 3px 0;width: 25%;'>Recommendation History
+                            <span  class='arrow' style="clear:both" ng-click='showHistory()' >
+                                        <i class="arrow right" ng-if='!history' style='top: -13px;left: 13px;'></i>
+                                        <i class="arrow down" ng-if='history' style="top: -13px;left: 13px;"></i></span></h4>
+
+                        <div ng-show="history">
+                            <table class='historyTable'>
+                                <thead>
+                                <tr class="rowsHistory" align="center">
+
+                                    <th style="width:25%;">Reviewer Name</th>
+                                    <th style="width:25%;">Role</th>
+                                    <th style="width:25%;">Facitily</th>
+                                    <th style="width:25%;">Recommended Limit(Rs)</th>
+                                    <th style="width:25%;">Recommended <br/>Rate/Commision(%)</th>
+                                    <th style="width:25%;">Created Date </th>
+
+
+                                </tr>
+                                </thead>
+                                <tbody style="background:none;" >
+                                <tr class="rowsHistory" align="center" style="border-bottom:1px solid #ddd" ng-repeat="history in creditScore.recommHistory">
+                                    <td style='background: #f5ebeb;'>{{history.User_Name__c}}</td>
+                                    <td style='background: #dcd9d9;'>{{history.User_Role__c}}</td>
+                                    <td style='background: #dcd9d9;'>{{history.Facility__c}}</td>
+                                    <td style='background: #dcd9d9;'>{{history.Recommendation_Limit_Rs__c}}</td>
+                                    <td style='background: #dcd9d9;'>{{history.Recommendation_Rate_of_Intrest__c}}&#x00025;</td>
+                                    <td style='background: #dcd9d9;'>{{history.CreatedDate | date : "dd-MM-yyyy"}}</td>
+
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+                    <div ng-if="creditScore.sanctionauthComments.length > 0">
+                        <h4 style='float:left; margin: 17px 0 5px 0;'>Previous Comments <span  class='arrow' ng-click='showSanctionHistory()' ><i class="arrow right" ng-if='!history' style='top: 4px;left: 9px;'></i><i class="arrow down" ng-if='history' style="top: 3px;left: 9px;"></i></span></h4>
+
+                        <div ng-show="sanctionHistory">
+                            <table class='historyTable'>
+                                <thead>
+                                <tr class="rowsHistory" align="center">
+
+                                    <th style="width:25%;">Reviewer Name</th>
+                                    <th style="width:74%;">Reviewer Comment</th>
+
+                                </tr>
+                                </thead>
+                                <tbody style="background:none;" >
+                                <tr class="rowsHistory" align="center" style="border-bottom:1px solid #ddd" ng-repeat="history in creditScore.sanctionauthComments">
+                                    <td style='background: #f5ebeb;'>{{history.User__r.Name}}</td>
+                                    <td style='background: #dcd9d9;'>{{history.Sanction_Authority_Comment__c}}</td>
+
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </fieldset>
+        <div class="formDiv rightDiv" ng-show="showReviewCommt && sancProcess.isSaveOperationDone && creditScore.facilityList[0].Is_Save_Operation_Done__c" >
+            <h4 style='float:left;margin:0px 0px 0px 0px;clear:both'>
+                Reviewer Comment
+            </h4>
+            <textarea class="textareaBox" style="margin-top: 0px;" ng-model="SanctionAuthorityComment"></textarea>
+        </div>
+
+        <div class="loadingBackground" ng-show="showExposure" ng-click="closeExposure()">
+        </div>
+        <div class="searchRow" align="center">
+            <input type="button" ng-show="sancProcess.isSpecialTermsEditable" value="Update T&C" class="escButtons" ng-click="updateSpecialTermsAndCondition();" />
+            <input type="button" value="Reject Application" ng-show="sancProcess.isSpecialTermsEditable"  class="escButtons" ng-click="rejecthelper();"/>
+        </div>
+
+        <fieldSet ng-disabled="btnFields" ng-hide="(sancProcess.isOwner && (sancProcess.isEmeBMReviewer || BMEditable))">
+
+            <div class="searchRow" align="center" ng-show="isApproved" style="margin-bottom: 20px;margin-top: -5px;">
+
+
+
+                <input type="button" value="Approve" ng-disabled="isApprRej || isReadonly || onLoadApproveCheck" ng-hide="sancProcess.isPreDisbersementOpenTaskExist || sancProcess.isPreDisbersementCountExcceded" class="escButtons" ng-click="saveUnderWritingData('Approve');" />
+                <input type="button" value="Approve Pre Disbersement"  class="escButtons" ng-click="completeFinalSanction()" ng-hide=" !sancProcess.isPreDisbersementOpenTaskExist && !sancProcess.isPreDisbersementCountExcceded"/>
+
+                <input type="button"   value="Reject Application" ng-disabled="isApprRej || isReadonly || onLoadMARCheck" class="escButtons" ng-click="rejecthelper();"/>
+                <input type="button" value="Refer back" ng-hide="referback || sancProcess.isOwner ||  sancProcess.isDeviationApprover || sancProcess.isPreDisbersementCountExcceded " ng-disabled="sancProcess.isOwner" class="escButtons" ng-click="refferBack();"/>
+                <input type="button" ng-disabled="isRHA || isReadonly || onLoadisHRACheck" value="Refer to next authority" class="escButtons" ng-click="saveUnderWritingData('Recommend to higher authority');" />
+
+            </div>
+        </fieldSet>
+
+
+        <div ng-show="disableAllshow" >
+            <b>Reviewer Comment </b><!--ng-hide="(sancProcess.isPreDisbersementEnabled &&  creditScore.preDisbursementComments.length > 0 && sancProcess.isFinalAuhtority)"-->
+            <textarea class="bigTextArea" ng-model="commentNotRec"/>
+            <div style="text-align:center">
+                <input type="button" value="Submit"  class="escButtons" ng-click="saveCommentBtm()" />
+            </div>
+
+        </div>
+        <div>
+
+
+            <div style="text-align:center" ng-show="onlyAppRej">
+                <input type="button" value="Approve"  class="escButtons" ng-click="onlyApproveRej('Approve')" />
+                <input type="button" value="Reject"  class="escButtons" ng-click="onlyApproveRej('Reject')" />
+            </div>
+
+        </div>
+        <fieldSet  >
+            <div class="searchRow" align="center"  style="margin-bottom: 20px;margin-top: -5px;" ng-show="sancProcess.isLimitEditable">
+                <input type="button" ng-hide="!sancProcess.isOwner" value="Save Recommendation" ng-disabled="!sancProcess.isSubmitEnabledForNTB" class="escButtons" ng-click="updateLimitAmount() " />
+
+                <input type="button" ng-hide="!sancProcess.isOwner" value="Submit Recommendation" ng-disabled="!sancProcess.isSubmitEnabledForNTB" class="escButtons" ng-click="updateLimitAmount() " />
+                <input type="button"  ng-hide="!sancProcess.isOwner" value="Reject Application"  class="escButtons" ng-click="rejecthelper();"/>
+
+            </div>
+            <div class="searchRow" align="center"  style="margin-bottom: 20px;margin-top: -5px;">
+                <div ng-show="!sancProcess.isBMreviewDone || sancProcess.isBMreviewPending">
+
+
+                    <div ng-show="(sancProcess.isOwner && (sancProcess.isEmeBMReviewer || BMEditable))" style="display:inline!important;"><!-- ()sancProcess.isEmeBMReviewer -->
+                        <!--!sancProcess.isSubmitEnabledForNTB || -->
+                        <input type="button" ng-show="sancProcess.isOwner && (sancProcess.isEmeBMReviewer || BMEditable)" value="Save Recommendation" ng-disabled="!sancProcess.isM121Completed" class="escButtons" ng-click="validateRecommendation('SAVE')" />
+
+                        <input type="button" ng-show="sancProcess.isOwner && (sancProcess.isEmeBMReviewer || BMEditable)" value="Submit Recommendation" ng-disabled="!sancProcess.isSubmitEnabledForNTB || !sancProcess.isM121Completed || !creditScore.facilityList[0].Is_Save_Operation_Done__c" class="escButtons" ng-click="validateRecommendation('SUBMIT')" />
+                    </div>
+                    <div class="searchRow" align="" ng-show="isApproved " style="margin-bottom: 20px;margin-top: -5px;display:inline!important;">
+                        <input type="button" ng-show="isApproved && (sancProcess.isOwner && (sancProcess.isEmeBMReviewer || BMEditable)) " ng-hide="!sancProcess.isOwner" value="Reject Application"  ng-disabled="isApprRej || isReadonly || onLoadMARCheck" class="escButtons" ng-click="rejecthelper();"/>
+                    </div>
+                </div>
+
+                <div ng-show="sancProcess.isOwner && !sancProcess.isPreDisbersementEnabled && creditScore.preDisbursementComments.length > 0" >
+                    <input type="button" ng-show="sancProcess.isOwner && !sancProcess.isPreDisbersementEnabled && creditScore.preDisbursementComments.length > 0" value="Submit Compliance"  class="escButtons" ng-click="updatePreDisbersementComments()" />
+                </div>
+                <div ng-show="sancProcess.isUDEditableForRMD" >
+                    <b>Reviewer Comment </b><!--ng-hide="(sancProcess.isPreDisbersementEnabled &&  creditScore.preDisbursementComments.length > 0 && sancProcess.isFinalAuhtority)"-->
+                    <textarea class="bigTextArea" ng-model="RMDComment"/>
+                    <div style="text-align:center">
+                        <input type="button" value="Accept"  class="escButtons" ng-click="saveCommentRMD()" />
+                        <input type="button" value="Reject"  class="escButtons" ng-click="rejectCommentRMD()" />
+                    </div>
+
+                </div>
+                <!--<div ng-show="sancProcess.isFinalAuhtority && sancProcess.isPreDisbersementCountExcceded">
+
+<input type="button" value="Approve Pre Disbersement"  class="escButtons" ng-click="completeFinalSanction()" />
+</div>-->
+            </div>
+            <!--<div id="word"></div>-->
+        </fieldSet>
+    </div>
+    <br/>
+    <br/>
+
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+
+    <script type="text/javascript">
+            window.onscroll = function() {myFunction()};
+
+            var header = document.getElementById("myHeader");
+            var sticky = header.offsetTop;
+
+            function myFunction() {
+                if (window.pageYOffset >= sticky) {
+                    header.classList.add("sticky");
+                } else {
+                    header.classList.remove("sticky");
+                }
+            }
+
+            function DropDown(el) {
+                this.dd = el;
+                this.placeholder = this.dd.children('span');
+                this.opts = this.dd.find('ul.dropdown > li');
+                this.val = '';
+                this.index = -1;
+                this.initEvents();
+            }
+            DropDown.prototype = {
+                initEvents : function() {
+                    var obj = this;
+
+                    obj.dd.on('click', function(event){
+                        $(this).toggleClass('active');
+                        return false;
+                    });
+
+                    obj.opts.on('click',function(){
+                        var opt = $(this);
+                        obj.val = opt.text();
+                        obj.index = opt.index();
+                        obj.placeholder.text( obj.val);
+                    });
+                },
+                getValue : function() {
+                    return this.val;
+                },
+                getIndex : function() {
+                    return this.index;
+                }
+            }
+
+            $(function() {
+
+                var dd = new DropDown( $('#dd') );
+
+                $(document).click(function() {
+                    // all dropdowns
+                    $('.wrapper-dropdown-1').removeClass('active');
+                });
+
+
+                $('.dynamicTable tbody').scroll(function(e) { //detect a scroll event on the tbody
+                    /*
+                Setting the thead left value to the negative valule of tbody.scrollLeft will make it track the movement
+                of the tbody element. Setting an elements left value to that of the tbody.scrollLeft left makes it maintain             it's relative position at the left of the table.
+                */
+
+
+                    $('.dynamicTable tbody td:nth-child(1)').css("left", $(".dynamicTable tbody").scrollLeft()); //fix the first column of tdbody
+                });
+            });
+            var acc = document.getElementsByClassName("accordion");
+            var i;
+
+            for (i = 0; i < acc.length; i++) {
+                acc[i].addEventListener("click", function() {
+                    this.classList.toggle("active");
+                    var panel = this.nextElementSibling;
+                    if (panel.style.display === "block") {
+                        panel.style.display = "none";
+                    } else {
+                        panel.style.display = "block";
+                    }
+                });
+            }
+
+            </script>
+
+    </body>
+    </html>
+</apex:page>

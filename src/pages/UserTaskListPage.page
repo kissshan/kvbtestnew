@@ -1,0 +1,26 @@
+<apex:page showHeader="false" sidebar="false" controller="UserTaskController">
+    
+    <apex:form >
+        <apex:pageBlock title="My Task List" >
+            
+            <apex:pageBlockTable value="{!newTaskList}" var="task" id="taskListId">
+                <apex:column ><button type="submit"  onclick="completeTask('{!task.taskRec.Id}');return false;">X</button></apex:column>
+                <apex:column headerValue="Date" value="{!task.taskRec.ActivityDate}"/>
+                <apex:column headerValue="Status" value="{!task.taskRec.Status}"/>
+                <apex:column headerValue="Subject" value="{!task.taskRec.Subject}"/>
+                <apex:column headerValue="Application" >
+                    <apex:outputLink value="/{!task.taskRec.WhatId}">
+                        <apex:outputText value="{!task.appName}">
+                        </apex:outputText>
+                    </apex:outputLink>
+                </apex:column>
+                <apex:column headerValue="Company" value="{!task.taskRec.Company_Name__c}"/>
+                <apex:column headerValue="Product Name" value="{!task.taskRec.Product_Name__c}"/>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+        <apex:actionFunction action="{!completeSelectedTask}" name="completeTask" rerender="taskListId">
+            <apex:param name="firstParam" assignTo="{!taskId}" value="" />
+        </apex:actionFunction>
+        
+    </apex:form>
+</apex:page>

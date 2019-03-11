@@ -1,0 +1,20 @@
+<apex:component >
+    <link rel="stylesheet" href="{!URLFOR($Resource.dashboardCss)}" />
+    <link rel="stylesheet" href="{!URLFOR($Resource.sweetalertscss)}" />
+    <script src="{!$Resource.angular_min}">
+    </script>
+    <script src="{!$Resource.angular_route}">
+    </script>
+    <script src="{!$Resource.angular_animate}">
+    </script>
+    <script src="{!$Resource.angularScrollable}">
+    </script>
+    <script src="{!$Resource.angular_aria}">
+    </script>
+    <script src="{!$Resource.angular_msg}">
+    </script>   
+     <script src="{!$Resource.sweetalertsJs}">
+    </script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    
+    </apex:component>

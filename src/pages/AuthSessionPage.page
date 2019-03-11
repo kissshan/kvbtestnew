@@ -1,0 +1,47 @@
+<apex:page id="AuthSessionPage" controller="AuthSessionController" showHeader="false" standardStylesheets="true" sideBar="false" action="{!deleteAllOtherSession}">
+    <html>
+    <head>
+
+    </head>
+    <body>
+    <apex:form id="repeatFrm">
+        <apex:pageBlock id="abc">
+           <!-- <apex:repeat  var="rec" value="{!loogedInUserAuthSessions}">
+            {!rec}
+            </apex:repeat>-->
+           <!-- {!loogedInUserAuthSessions}-->
+        </apex:pageBlock>
+       <!-- <apex:commandButton action="{!getRecords}" reRender="abc"/>-->
+        <apex:pageBlock title="My Content">
+
+            <apex:pageBlockTable value="{!loogedInUserAuthSessions}" var="item">
+
+                <apex:column value="{!item.Id}"/>
+                <apex:column value="{!item.CreatedDate}" />
+                <apex:column value="{!item.IsCurrent}"/>
+                <apex:column value="{!item.LoginType}"/>
+                <apex:column value="{!item.SessionSecurityLevel}"/>
+                <apex:column value="{!item.SessionType}"/>
+                <apex:column value="{!item.SourceIp}"/>
+                <apex:column value="{!item.UsersId}"/>
+                <apex:column value="{!item.UserType}"/>
+                <!--<button type="submit" onclick="deleteSession()">Delete</button>-->
+                <apex:column >
+                    <apex:commandButton rendered="{!item.SessionType =='UI'}" value="Delete Session" action="{!deleteSession}" reRender="repeatFrm" immediate="true" oncomplete="alert('Completed');">
+                        <apex:param name="param1" assignTo="{!sessionIdToBedeleted}" value="{!item.Id}" />
+                    </apex:commandButton>
+                </apex:column>
+
+
+            </apex:pageBlockTable>
+
+        </apex:pageBlock>
+        <apex:commandButton value="Delete All Other Session" action="{!deleteAllOtherSession}" onComplete="alert('Ho Gaya BHD ke')"/>
+
+    </apex:form>
+    </body>
+    </html>
+
+
+
+</apex:page>

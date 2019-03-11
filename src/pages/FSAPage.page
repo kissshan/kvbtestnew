@@ -1,0 +1,48 @@
+<apex:page controller="DocumentsForMissingFinancialYears" showHeader="false" sidebar="false">
+    <apex:form rendered="{!uploadBlock}">
+        <apex:pageBlock title="Update Document UUID">
+            <apex:pageBlockSection >                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Document" for="document"/>
+                    <apex:inputFile value="{!document.body}" filename="{!document.name}" id="file"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:pageBlock >
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton action="{!updateDocCatJun}" value="Upload"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+    <apex:form enctype="multipart/form-data" rendered="{!insertBlock}">
+        <apex:pageMessages />
+        <apex:pageBlock title="Upload Document"> 
+            <apex:pageBlockSection showHeader="false" columns="2" id="block1">
+                <apex:pageBlockSectionItem >
+                    <apex:outputText value="Financial Year" />
+                    <apex:selectList value="{!fisicalYears}" multiselect="false" size="1">
+                        <apex:selectOptions value="{!missingFisicalYears}"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputText value="Document Name"/>
+                    <apex:selectList value="{!selecteddocument}" multiselect="false" size="1">
+                        <apex:selectOptions value="{!documentCats}"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Document" for="document"/>
+                    <apex:inputFile value="{!document.body}" filename="{!document.name}" id="file"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:pageBlock >
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton action="{!insertDocCatJun}" value="Upload"/>
+                <!-- <apex:commandButton action="{!detaiPage}" value="Back To DetaiPage"/> -->
+                <apex:commandbutton onClick="window.top.close();" value="Done"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock> 
+    </apex:form>
+</apex:page>

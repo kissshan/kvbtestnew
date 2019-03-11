@@ -1,0 +1,31 @@
+<apex:page standardController="TASK" extensions="TaskAssignmentPageController" showHeader="false" standardStylesheets="true">
+    <apex:form >
+        <apex:pageblock >
+            <apex:pageMessages ></apex:pageMessages>
+            <apex:commandButton action="{!reassignTask}"  value="Re-Assign Task" oncomplete="CloseWindow({!count});" />
+            <apex:pageblockSection title="Re-Assign User" >
+                <apex:pageBlockTable value="{!lstWrpCls}" var="lst" >
+                    <apex:column id="cl1">
+                        <apex:inputcheckbox value="{!lst.selected}" />
+                    </apex:column>
+                    <apex:column value="{!lst.groupMember}" headerValue="USER ID"/>
+                    <apex:column value="{!lst.memberName}" headerValue="USER ROLE"/>
+                </apex:pageBlockTable>
+            </apex:pageblockSection>
+        </apex:pageblock>
+    </apex:form>
+    <script>
+    function CloseWindow(count)
+    { 
+        if(count==1){
+            window.top.close();
+        }
+        else if(count == 0){
+            alert('Please Select at Least one User');
+        }
+            else{
+                alert('Please Select only one User');
+            }
+    }
+    </script>
+</apex:page>

@@ -1,0 +1,284 @@
+@isTest
+public class YTDAnalysisHelper_Test {
+     @isTest
+    public static void method1(){
+        Account acc=new account();
+         acc = SME_TestUtil.createAccount('HP Agencies','CHENNAI','1210009','Mahesh','Father in law','KVB');
+         insert acc;
+        
+        genesis__Applications__c genApp=new genesis__Applications__c();
+          genApp = SME_TestUtil.createApplication('1857',acc.id,'Application review','test','CompanyDetailsView');
+        insert genApp;
+        
+         genesis__Applications__c genApp1=new genesis__Applications__c();
+          genApp1 = SME_TestUtil.createApplication('1858',acc.id,'Application review','test','CompanyDetailsView');
+        insert genApp1;
+        
+        M68_Balance_Sheet_Analysis__c m68Bal= new M68_Balance_Sheet_Analysis__c();
+        m68Bal.Account__c= acc.Id;
+        m68Bal.Fiscal_Year__c= '2017-18';
+        m68Bal.Financial_type__c='Actual';
+        m68Bal.Sundry_Creditors__c=88667.9879;
+        m68Bal.Purchases__c=897.98987;
+        m68Bal.Net_sales__c=50000;
+        m68Bal.Month__c='Apr-Jan';
+        insert m68Bal;
+        M68_Balance_Sheet_Analysis__c m68Bal1= new M68_Balance_Sheet_Analysis__c();
+        m68Bal1.Account__c= acc.Id;
+        m68Bal1.Fiscal_Year__c= '2016-17';
+        m68Bal1.Financial_type__c='Actual';
+        m68Bal1.Sundry_Creditors__c=88667.9879;
+        m68Bal1.Purchases__c=897.98987;
+        m68Bal1.Net_sales__c=50000;
+        m68Bal1.Month__c='Apr-Jan';
+        insert m68Bal1;
+        M68_Balance_Sheet_Analysis__c m68Bal2= new M68_Balance_Sheet_Analysis__c();
+        m68Bal2.Account__c= acc.Id;
+        m68Bal2.Fiscal_Year__c= '2015-16';
+        m68Bal2.Financial_type__c='Actual';
+        m68Bal2.Sundry_Creditors__c=88667.9879;
+        m68Bal2.Purchases__c=897.98987;
+        m68Bal2.Net_sales__c=50000;
+        m68Bal2.Month__c='Apr-Jan';
+        insert m68Bal2;
+         M68_Balance_Sheet_Analysis__c m68Bal3= new M68_Balance_Sheet_Analysis__c();
+        m68Bal3.Account__c= acc.Id;
+        m68Bal3.Fiscal_Year__c= '2019-20';
+        m68Bal3.Financial_type__c='Projected';
+        m68Bal3.Sundry_Creditors__c=88667.9879;
+        m68Bal3.Purchases__c=897.98987;
+        m68Bal3.Net_sales__c=50000;
+        m68Bal3.Month__c='Apr-Jan';
+        insert m68Bal3;
+         M68_Balance_Sheet_Analysis__c m68Bal4= new M68_Balance_Sheet_Analysis__c();
+        m68Bal4.Account__c= acc.Id;
+        m68Bal4.Fiscal_Year__c= '2018-19';
+        m68Bal4.Financial_type__c='YTD';
+        m68Bal4.Sundry_Creditors__c=88667.9879;
+        m68Bal4.Purchases__c=897.98987;
+        m68Bal4.Net_sales__c=50000;
+        m68Bal4.Month__c='Apr-Jan';
+        insert m68Bal4;
+        
+        GSTN_Info__c gst=new GSTN_Info__c();
+        gst.Account__c=acc.id;
+        gst.Application__c=genapp.id;
+        gst.Year__c='2018';
+        gst.Total_Sales__c=78266;
+       // gst.Parent__c=genApp1.id;
+        insert gst;
+        
+        GSTN_Info__c gst1=new GSTN_Info__c();
+        gst1.Account__c=acc.id;
+        gst1.Application__c=genapp.id;
+        gst1.Year__c='2018';
+        gst1.Total_Sales__c=78266;
+        gst1.Parent__c=gst.id;
+        insert gst1;
+        
+        list<GSTN_Info__c> lstgst=new list<GSTN_Info__c>();
+        lstgst.add(gst);
+        List<M68_Balance_Sheet_Analysis__c> lstm=new List<M68_Balance_Sheet_Analysis__c>();
+        lstm.add(m68Bal);
+        
+        Debtors__c deb = new Debtors__c();
+        deb=SME_TestUtil.createDeb(acc.Id,'Test Customer','31-60',34.56,'2017-18');
+        insert deb;
+        system.debug('deb==++'+deb);
+        
+        Sundry_Creditors__c suncredit = SME_TestUtil.createSundryCreditors(acc.Id,'0-30',34.56,'2017-18','Test Trade Creditors');
+        insert suncredit;
+        
+        Test.startTest();
+        YTDAnalysisHelper.getEstimateSalesAnalysis(acc.id,genApp.id);
+        YTDAnalysisHelper.getCreditorDebitorsFlag(acc.id);
+        YTDAnalysisHelper.getSalesAnalysisFlag(88.00,463.00,230.373,'PROJ');
+        YTDAnalysisHelper.getPurchaseAnalysisFlag(74.938,8373.973,98877328.383,'PROJ');
+        YTDAnalysisHelper.calculateVelocity(m68Bal,'CREDITOR');
+        YTDAnalysisHelper.getDeltaFlag(823.92873,8646.38737,73563.386,764.73);
+        YTDAnalysisHelper.getYTDAnalysis(m68Bal,'PURCHASE',6135.176);
+        YTDAnalysisHelper.isExceedingAdhocLessThanFifty(genApp.id);
+        YTDAnalysisHelper.getGstflags(acc.id,genApp.id);
+        YTDAnalysisHelper.getCalculatedNetSales(373662.83,736252.272,10);
+        YTDAnalysisHelper.getGSTR3TData(lstgst,'2018','2019');
+        YTDAnalysisHelper.getM68Data(lstm,'2019','2020');
+        Test.stopTest();
+    }
+     @isTest
+    public static void method2(){
+        Account acc=new account();
+         acc = SME_TestUtil.createAccount('HP Agencies','CHENNAI','1210009','Mahesh','Father in law','KVB');
+         insert acc;
+        genesis__Applications__c genApp=new genesis__Applications__c();
+          genApp = SME_TestUtil.createApplication('1857',acc.id,'Application review','test','CompanyDetailsView');
+        insert genApp;
+         genesis__Applications__c genApp1=new genesis__Applications__c();
+          genApp1 = SME_TestUtil.createApplication('1858',acc.id,'Application review','test','CompanyDetailsView');
+        insert genApp1;
+        
+        M68_Balance_Sheet_Analysis__c m68Bal= new M68_Balance_Sheet_Analysis__c();
+        m68Bal.Account__c= acc.Id;
+        m68Bal.Fiscal_Year__c= '2016-17';
+        m68Bal.Financial_type__c='Actual';
+        m68Bal.Sundry_Creditors__c=88667.9879;
+        m68Bal.Purchases__c=897.98987;
+        m68Bal.Net_sales__c=50000;
+        m68Bal.Month__c='Apr-Jan';
+        insert m68Bal;
+        GSTN_Info__c gst=new GSTN_Info__c();
+        gst.Account__c=acc.id;
+        gst.Application__c=genapp.id;
+        gst.Year__c='2018';
+        gst.Total_Sales__c=78266;
+       // gst.Parent__c=genApp1.id;
+        insert gst;
+         GSTN_Info__c gst1=new GSTN_Info__c();
+        gst1.Account__c=acc.id;
+        gst1.Application__c=genapp.id;
+        gst1.Year__c='2018';
+        gst1.Total_Sales__c=78266;
+        gst1.Parent__c=gst.id;
+        insert gst1;
+        list<GSTN_Info__c> lstgst=new list<GSTN_Info__c>();
+        lstgst.add(gst);
+        List<M68_Balance_Sheet_Analysis__c> lstm=new List<M68_Balance_Sheet_Analysis__c>();
+        lstm.add(m68Bal);
+        Debtors__c deb = new Debtors__c();
+        deb=SME_TestUtil.createDeb(acc.Id,'Test Customer','31-60',34.56,'2016-17');
+        insert deb;
+        Sundry_Creditors__c suncredit = SME_TestUtil.createSundryCreditors(acc.Id,'0-30',34.56,'2016-17','Test Trade Creditors');
+        insert suncredit;
+        Test.startTest();
+        YTDAnalysisHelper.getEstimateSalesAnalysis(acc.id,genApp.id);
+        YTDAnalysisHelper.getCreditorDebitorsFlag(acc.id);
+        YTDAnalysisHelper.getSalesAnalysisFlag(88.00,463.00,230.373,'EST');
+        YTDAnalysisHelper.getPurchaseAnalysisFlag(74.938,8373.973,98877328.383,'EST');
+        YTDAnalysisHelper.calculateVelocity(m68Bal,'DEBITOR');
+        YTDAnalysisHelper.getDeltaFlag(823.92873,8646.38737,73563.386,764.73);
+        YTDAnalysisHelper.getYTDAnalysis(m68Bal,'PURCHASE',6135.176);
+        YTDAnalysisHelper.isExceedingAdhocLessThanFifty(genApp.id);
+        YTDAnalysisHelper.getGstflags(acc.id,genApp.id);
+        YTDAnalysisHelper.getCalculatedNetSales(373662.83,736252.272,12);
+        YTDAnalysisHelper.getGSTR3TData(lstgst,'2018','2019');
+        YTDAnalysisHelper.getM68Data(lstm,'2019','2020');
+        Test.stopTest();
+    }
+    @isTest
+    public static void method3(){
+        Account acc=new account();
+         acc = SME_TestUtil.createAccount('HP Agencies','CHENNAI','1210009','Mahesh','Father in law','KVB');
+         insert acc;
+        genesis__Applications__c genApp=new genesis__Applications__c();
+          genApp = SME_TestUtil.createApplication('1857',acc.id,'Application review','test','CompanyDetailsView');
+        insert genApp;
+         genesis__Applications__c genApp1=new genesis__Applications__c();
+          genApp1 = SME_TestUtil.createApplication('1858',acc.id,'Application review','test','CompanyDetailsView');
+        insert genApp1;
+        
+        M68_Balance_Sheet_Analysis__c m68Bal= new M68_Balance_Sheet_Analysis__c();
+        m68Bal.Account__c= acc.Id;
+        m68Bal.Fiscal_Year__c= '2018-19';
+        m68Bal.Financial_type__c='Estimated';
+        m68Bal.Sundry_Creditors__c=88667.9879;
+        m68Bal.Purchases__c=897.98987;
+        m68Bal.Net_sales__c=50000;
+        m68Bal.Month__c='Apr-Jan';
+        insert m68Bal;
+        GSTN_Info__c gst=new GSTN_Info__c();
+        gst.Account__c=acc.id;
+        gst.Application__c=genapp.id;
+        gst.Year__c='2018';
+        gst.Total_Sales__c=78266;
+       // gst.Parent__c=genApp1.id;
+        insert gst;
+         GSTN_Info__c gst1=new GSTN_Info__c();
+        gst1.Account__c=acc.id;
+        gst1.Application__c=genapp.id;
+        gst1.Year__c='2018';
+        gst1.Total_Sales__c=78266;
+        gst1.Parent__c=gst.id;
+        insert gst1;
+        list<GSTN_Info__c> lstgst=new list<GSTN_Info__c>();
+        lstgst.add(gst);
+        List<M68_Balance_Sheet_Analysis__c> lstm=new List<M68_Balance_Sheet_Analysis__c>();
+        lstm.add(m68Bal);
+        Debtors__c deb = new Debtors__c();
+        deb=SME_TestUtil.createDeb(acc.Id,'Test Customer','31-60',34.56,'2018-19');
+        insert deb;
+        Sundry_Creditors__c suncredit = SME_TestUtil.createSundryCreditors(acc.Id,'0-30',34.56,'2018-19','Test Trade Creditors');
+        insert suncredit;
+        Test.startTest();
+        YTDAnalysisHelper.getEstimateSalesAnalysis(acc.id,genApp.id);
+        YTDAnalysisHelper.getCreditorDebitorsFlag(acc.id);
+        YTDAnalysisHelper.getSalesAnalysisFlag(88.00,463.00,230.373,'EST');
+        YTDAnalysisHelper.getPurchaseAnalysisFlag(74.938,8373.973,98877328.383,'EST');
+        YTDAnalysisHelper.calculateVelocity(m68Bal,'DEBITOR');
+        YTDAnalysisHelper.getDeltaFlag(823.92873,8646.38737,73563.386,764.73);
+        YTDAnalysisHelper.getYTDAnalysis(m68Bal,'PURCHASE',6135.176);
+        YTDAnalysisHelper.isExceedingAdhocLessThanFifty(genApp.id);
+        YTDAnalysisHelper.getGstflags(acc.id,genApp.id);
+        YTDAnalysisHelper.getCalculatedNetSales(373662.83,736252.272,12);
+        YTDAnalysisHelper.getGSTR3TData(lstgst,'2018','2019');
+        YTDAnalysisHelper.getM68Data(lstm,'2019','2020');
+        Test.stopTest();
+    }
+    @isTest
+    public static void method4(){
+        Account acc=new account();
+         acc = SME_TestUtil.createAccount('HP Agencies','CHENNAI','1210009','Mahesh','Father in law','KVB');
+         insert acc;
+        genesis__Applications__c genApp=new genesis__Applications__c();
+          genApp = SME_TestUtil.createApplication('1857',acc.id,'Application review','test','CompanyDetailsView');
+        insert genApp;
+         genesis__Applications__c genApp1=new genesis__Applications__c();
+          genApp1 = SME_TestUtil.createApplication('1858',acc.id,'Application review','test','CompanyDetailsView');
+        insert genApp1;
+        
+        M68_Balance_Sheet_Analysis__c m68Bal= new M68_Balance_Sheet_Analysis__c();
+        m68Bal.Account__c= acc.Id;
+        m68Bal.Fiscal_Year__c= '2015-16';
+        m68Bal.Financial_type__c='Actual';
+        m68Bal.Sundry_Creditors__c=88667.9879;
+        m68Bal.Purchases__c=897.98987;
+        m68Bal.Net_sales__c=50000;
+        m68Bal.Month__c='Apr-Jan';
+        insert m68Bal;
+        GSTN_Info__c gst=new GSTN_Info__c();
+        gst.Account__c=acc.id;
+        gst.Application__c=genapp.id;
+        gst.Year__c='2018';
+        gst.Total_Sales__c=78266;
+       // gst.Parent__c=genApp1.id;
+        insert gst;
+         GSTN_Info__c gst1=new GSTN_Info__c();
+        gst1.Account__c=acc.id;
+        gst1.Application__c=genapp.id;
+        gst1.Year__c='2018';
+        gst1.Total_Sales__c=78266;
+        gst1.Parent__c=gst.id;
+        insert gst1;
+        list<GSTN_Info__c> lstgst=new list<GSTN_Info__c>();
+        lstgst.add(gst);
+        List<M68_Balance_Sheet_Analysis__c> lstm=new List<M68_Balance_Sheet_Analysis__c>();
+        lstm.add(m68Bal);
+        Debtors__c deb = new Debtors__c();
+        deb=SME_TestUtil.createDeb(acc.Id,'Test Customer','31-60',34.56,'2015-16');
+        insert deb;
+        Sundry_Creditors__c suncredit = SME_TestUtil.createSundryCreditors(acc.Id,'0-30',34.56,'2015-16','Test Trade Creditors');
+        insert suncredit;
+        Test.startTest();
+        YTDAnalysisHelper.getEstimateSalesAnalysis(acc.id,genApp.id);
+        YTDAnalysisHelper.getCreditorDebitorsFlag(acc.id);
+        YTDAnalysisHelper.getSalesAnalysisFlag(88.00,463.00,230.373,'EST');
+        YTDAnalysisHelper.getPurchaseAnalysisFlag(74.938,8373.973,98877328.383,'EST');
+        YTDAnalysisHelper.calculateVelocity(m68Bal,'DEBITOR');
+        YTDAnalysisHelper.getDeltaFlag(823.92873,8646.38737,73563.386,764.73);
+        YTDAnalysisHelper.getYTDAnalysis(m68Bal,'PURCHASE',6135.176);
+        YTDAnalysisHelper.isExceedingAdhocLessThanFifty(genApp.id);
+        YTDAnalysisHelper.getGstflags(acc.id,genApp.id);
+        YTDAnalysisHelper.getCalculatedNetSales(373662.83,736252.272,12);
+        YTDAnalysisHelper.getGSTR3TData(lstgst,'2018','2019');
+        YTDAnalysisHelper.getM68Data(lstm,'2019','2020');
+        Test.stopTest();
+    }
+}

@@ -1,0 +1,444 @@
+<!-- 
+* @name        : StandardReport
+* @description : StandardReport VF Page for generating custom report (MIS)
+* @author      : Souvik Banik
+-->
+
+
+<apex:page controller="StandardReportController"  standardStylesheets="false" sidebar="false" showHeader="false" applyHtmlTag="false">
+    <html lang="en-us">
+        <head>
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+            <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+            <!--Isolated Version of Bootstrap, not needed if your site already uses Bootstrap-->
+            <link rel="stylesheet" href="https://formden.com/static/cdn/bootstrap-iso.css" />
+            <!--bootstrap date picker plugins-->
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+            <!-- Sweet Alert -->
+            <script src="bower_components/sweetalert/dist/sweetalert.min.js"></script>
+            <link rel="stylesheet" href="bower_components/sweetalert/dist/sweetalert.css"/>
+            <!-- Moment -->
+            <script src="https://cdn.jsdelivr.net/momentjs/2.14.1/moment-with-locales.min.js"></script>
+
+           <script>
+                $(document).ready(function(){
+                    var date_input=$('input[name="date"]'); //our date input has the name "date"
+                    var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
+                    var options={
+                        format: 'yyyy-mm-dd',
+                        container: container,
+                        orientation:"top right",
+                        todayHighlight: true,
+                        autoclose: true,
+                    };
+                    date_input.datepicker(options);
+                })
+            </script>
+
+            <style>
+                .dateCss{
+                width: 77% !important;
+                margin-left: 23% !important;
+                }
+                .marginLeft{
+                margin-left:3%;
+                }
+            </style>
+
+            <style>
+                table, th , td  {
+                <!-- border: 1px solid red; -->
+                border-collapse: collapse;
+                padding: 5px;
+                }
+                table tr:nth-child(odd) {
+                background-color: #f1f1f1;
+                }
+                table tr:nth-child(even) {
+                background-color: #ffffff;
+                }
+            </style>
+
+            <style>
+                {
+                    box-sizing: border-box;
+                }
+
+                /* Create two equal columns that floats next to each other */
+                .width30Percent{
+                 
+                    width: 100%;
+                    padding: 5px;
+                    height: 5%;
+                    border: 1px solid;
+                }
+                .column {
+                    float: left;
+                    width: 50%;
+                    height: 5%;
+                    padding: 5px;    
+                    border: 1px solid;
+                }
+                .column2 {
+                    height: 5%;
+                    padding: 5px;
+                }
+            </style>
+
+        </head>
+        
+        <body ng-app="StandardReportApp" ng-controller="stndrdRprtController" ng-cloak="true">
+            
+            <div> 
+                <h1><b><center>MIS REPORT</center></b></h1>
+                <br/>
+                <table style="width:100%">
+                    <tr>
+                        <th>
+                            <div class="text marginLeft">
+                                <label for="message">Product Category: </label>
+                                <!-- <select ng-model="ProductCategoryValue" class="form-control dropdown" ng-options="prodCat.Recordtype_Developer_Name__c as prodCat.Name for prodCat in ProdCategory"> -->
+                                <select ng-model="ProductCategoryValue" class="form-control dropdown" ng-init='ProductCategoryValue = "--None--"'>
+                                    <option class="whiteSpaceNoWrap" value="--None--">--None--</option>
+                                    <option class="whiteSpaceNoWrap" ng-repeat="prodCat in ProdCategory" value = "{{prodCat.Recordtype_Developer_Name__c}}">{{prodCat.Name}}</option>
+                                </select>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="text marginLeft">
+                                <label for = "message"> Period: </label>
+                                <select ng-model ="PeriodValue" class ="form-control dropdown" ng-init ='PeriodValue = "Custom"' ng-change = "changeFromTodate(PeriodValue);">
+                                    <option class="whiteSpaceNoWrap" ng-repeat="prd in Period" value = "{{prd.Name}}">{{prd.Name}}</option>
+                                </select>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="text marginLeft">
+                                <label for="message" class="dateCss">From Date: </label> 
+                                <input ng-model = "fromDateValue" class="form-control dateCss marginLeft" id="date" name="date" placeholder="DD-MM-YYYY" type="text" ng-disabled="disableFromToDate"/>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="text marginLeft">
+                                <label for="message" class="dateCss">To Date: </label>
+                                <input ng-model = "toDateValue" class="form-control dateCss marginLeft" id="date" name="date" placeholder="DD-MM-YYYY" type="text" ng-disabled="disableFromToDate"/>
+                            </div>
+                        </th>
+                        <th >
+                            <div class="text marginLeft" ng-hide="isRoleBM != 'OTHER'">
+                                <label for="message">Divison: </label>
+                                <select ng-model = "divisionValue" name="Product" class="form-control marginLeft" ng-init ='divisionValue = "All"' ng-change = "changeBranch(divisionValue);" ng-disabled="isRoleBM!='OTHER'">
+                                    <option class="whiteSpaceNoWrap" value="All">All</option>
+                                    <option class="whiteSpaceNoWrap" ng-repeat="(key, value) in DivsionAndBranch" value = "{{key}}">{{key}}</option>
+                                </select>
+                            </div>
+                            <div class="text marginLeft" ng-show="isRoleBM == 'BM' || isRoleBM == 'DM'">
+                                <label for="message">Divison: </label>
+                                <input ng-model = "UserObjData.Division" class="form-control dateCss marginLeft" type="text"  ng-disabled="isRoleBM =='BM' || isRoleBM == 'DM'"/>
+                            </div>
+                        </th>
+
+                        <th >
+                            <div class="text marginLeft" ng-hide="isRoleBM == 'BM'">
+                                <label for="message">Branch: </label>
+                                <select ng-model="BranchValue" class="form-control dropdown" ng-init ='BranchValue = "All"' ng-disabled="isRoleBM =='BM'" ng-change="abc()">
+                                    <option class="whiteSpaceNoWrap" value ="All">All</option>
+                                    <option class="whiteSpaceNoWrap" ng-repeat="branch in BranchList" value = "{{branch.CODCCBRN__c}}">{{branch.NAM_BRANCH__c}}</option>
+                                </select>
+                            </div>
+                            <div class="text marginLeft" ng-show="isRoleBM == 'BM'">
+                                <label for="message">Branch: </label>
+                                <input ng-model = "UserObjData.Branch_Name__c" class="form-control dateCss marginLeft" type="text"  ng-disabled="isRoleBM =='BM' || isRoleBM == 'DM'"/>
+                            </div>
+                        </th>
+
+                    </tr>
+                </table>
+                <br/>
+                <div class="footer" style="margin-left:3%;">
+                    <input type="button" value="Run Report" class="btn btn-primary"  ng-click="getApplications();"/>
+                </div> 
+            </div>
+            <br/><br/>
+            
+            
+            <div style="width:23%;float:left;margin-left:2%;margin-top:5%">
+
+                <!--<div class="width30Percent" style="text-align:center">Period</div>
+                <div class="column" style="text-align:center">Count</div>
+                <div class="column" style="text-align:center">Amount (In Cr.)</div>-->
+                
+                <div ng-repeat="(key, value) in BucketReport" style="display: inline;">
+                    
+                     <div ng-repeat="x in value" style="display: inline;" ng-if="key=='CURRENT'">
+                        <!--<div  style="margin-top: 2%; font-size: 13px;" class="column2"><b>{{x.bucketName}}</b></div>-->
+                         <div  style="margin-top: 2%;float: left;width: 100%;height: 5%;padding: 5px;border:1px solid">{{x.bucketName}}</div>
+                         <!--<div class="column" style="text-align:center;margin-top: 2%" >-</div>-->
+                     </div>
+                </div>
+
+            </div>
+            <!-- Current Period -->
+            <div style="width:23%;float:left;margin-left:2%">
+
+                <div class="width30Percent" style="text-align:center">Period</div>
+                <div class="column" style="text-align:center">Count</div>
+                <div class="column" style="text-align:center">Amount (In Cr.)</div>
+                <div ng-repeat="(key, value) in BucketReport" style="display: inline;">
+                    <div ng-repeat="x in value" style="display: inline;" ng-if="key=='CURRENT'">
+                        <div class="column" style="text-align:center;margin-top: 2%">{{x.count}}</div>
+                        <div class="column" style="text-align:center;margin-top: 2%" ng-if="x.amount>0.0">{{x.amount}}</div>
+                        <div class="column" style="text-align:center;margin-top: 2%" ng-if="x.amount==0.0">-</div>
+                        <br/>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Last Period -->
+            <div style="width:23%;float:left;margin-left:2%">
+
+                <div class="width30Percent" style="text-align:center"> Last Period</div>
+                <div class="column" style="text-align:center">Count</div>
+                <div class="column" style="text-align:center">Amount (In Cr.)</div>
+                <div ng-repeat="(key, value) in BucketReport" style="display: inline;">
+                    <div ng-repeat="x in value" style="display: inline;" ng-if="key=='LAST'">
+                        <div class="column" style="text-align:center;margin-top: 2%">{{x.count}}</div>
+                        <div class="column" style="text-align:center;margin-top: 2%" ng-if="x.amount>0.0">{{x.amount}}</div>
+                        <div class="column" style="text-align:center;margin-top: 2%" ng-if="x.amount==0.0">-</div>
+                        <br/>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Changes in % -->
+             <div style="width:23%;float:left;margin-left:2%">
+                <div class="width30Percent" style="text-align:center">Change %</div>
+                <div class="column" style="text-align:center">Count</div>
+                <div class="column" style="text-align:center">Amount (In Cr.)</div>
+                <div ng-repeat="x in changeValues" style="display: inline;">
+                    <div class="column" style="text-align:center;margin-top: 2%">{{x.count}}</div>
+                    <div class="column" style="text-align:center;margin-top: 2%" ng-if="x.amount>0.0">{{x.amount}}</div>
+                    <div class="column" style="text-align:center;margin-top: 2%" ng-if="x.amount==0.0 || x.amount==0">-</div>
+                    <br/>
+                </div>
+            </div>
+            <div style="margin-left:2%">
+            </div>
+            
+            <script>
+            var app = angular.module('StandardReportApp',[]);
+            app.controller('stndrdRprtController', function($scope) {
+
+            $scope.BranchValue = 'All';
+            $scope.disableFromToDate = false;
+            $scope.isRoleBM = '';
+            $scope.ProdCategory = [];
+            $scope.Period = [];
+            $scope.DivsionAndBranch  = [];
+            $scope.UserObjData = {};
+            //var userDesignation = '';
+            $scope.BucketReport = [];
+
+            $scope.abc= function(){
+                console.log($scope.BranchValue);
+            }
+            Visualforce.remoting.Manager.invokeAction("StandardReportController.getDivisionAndBranch",function(result,event){
+                if(result != undefined){
+                    console.log(result);
+                    $scope.DivsionAndBranch = result;
+                    $scope.$apply();
+                }
+             },
+             {escape: false} // No escaping, please
+            );
+
+            Visualforce.remoting.Manager.invokeAction("StandardReportController.getUserDetails",function(result,event){
+                if(result != undefined){
+                    debugger;
+                    console.log(result);
+                    $scope.UserObjData = result;
+                    //userDesignation = $scope.UserObjData.Designation__c;
+                    if((result.Designation__c).includes('BR') ||(result.Designation__c).includes('Branch')){
+                        $scope.isRoleBM = 'BM';
+                        $scope.BranchValue = $scope.UserObjData.Office_Code__c;
+                    }else if((result.Designation__c).includes('DO')){
+                        $scope.isRoleBM = 'DM';
+                        $scope.changeBranch(result.Division);
+                    }else{
+                        $scope.isRoleBM = 'OTHER';
+                    }
+                    $scope.$apply();
+                }
+             },
+             {escape: false} // No escaping, please
+            );
+
+            Visualforce.remoting.Manager.invokeAction("StandardReportController.getProdCategory",function(result,event){
+                if(result != undefined){
+                    console.log(result);
+                    $scope.ProdCategory = result;
+                    $scope.$apply();
+                }
+             },
+             {escape: false} // No escaping, please
+            );
+            
+            Visualforce.remoting.Manager.invokeAction("StandardReportController.getPeriod",function(result,event){
+                if(result != undefined){
+                    console.log(result);
+                    $scope.Period = result;
+                    $scope.$apply();
+                }
+             },
+             {escape: false} // No escaping, please
+            ); 
+          
+
+
+            $scope.changeValues =[];
+            $scope.getApplications = function(){
+                $scope.BucketReport = [];
+                $scope.changeValues=[];
+                $scope.saveData = new Object();
+                $scope.saveData.prodCat     = $scope.ProductCategoryValue;
+                $scope.saveData.period      = $scope.PeriodValue;
+                $scope.saveData.branchName  = $scope.BranchValue;
+                $scope.saveData.division    = $scope.divisionValue;
+                $scope.saveData.fromDate    = new Date($scope.fromDateValue).toString();
+                $scope.saveData.toDate      = new Date($scope.toDateValue).toString();
+                console.log('asad');
+                console.log($scope.toDateValue);
+                console.log('####');
+                console.log(new Date($scope.toDateValue).toString());
+
+                $scope.loading = true;
+                StandardReportController.getBuckettedRecords($scope.saveData,function(result,event){
+                    if(event.status){
+                        $scope.BucketReport = result;
+                        console.log('Bucket Report');
+                        console.log($scope.BucketReport);
+                        var current=[];
+                        var last =[];
+                        angular.forEach(result, function(value, key){
+                            //debugger;
+                            if(key=='CURRENT')
+                            current = value;
+                            if(key=='LAST')
+                            last =value;
+                            //$scope.changeValues.push({"count":,"amount":});
+                        });
+                        //debugger;
+                        for(var i=0;i<current.length;i++){
+                            $scope.changeValues.push({"count":current[i].count-last[i].count,"amount":current[i].amount-last[i].amount});
+                        }
+                        if($scope.BucketReport.length == 0){
+                            $scope.loading = false;
+                        }
+                        $scope.$apply();
+                    }
+                    else{
+                        $scope.loading = false;
+                        $scope.$apply();
+                    }
+                },{escape: false});
+            }
+
+            $scope.changeFromTodate = function(period){
+                $scope.disableFromToDate = true; 
+                console.log('Selected Period value : ' + period);
+                if(period != null && period != ''){
+                    var date = new Date();
+
+                    if(period == 'Current CY'){
+                       
+                        //var lastDay = date.getFullYear()+'-'+date.getMonth()+'-'+$scope.getDaysInMonth(date.getMonth(),date.getFullYear());
+
+                        /*var firstDay    = '1'+'-'+1+'-'+date.getFullYear();
+                        var lastDay     = $scope.getDaysInMonth(12,date.getFullYear())+'-'+'12'+'-'+date.getFullYear();*/
+                        var firstDay = date.getFullYear()+'-'+(1)+'-'+'01';
+                        var lastDay = date.getFullYear()+'-'+'12'+'-'+$scope.getDaysInMonth(12,date.getFullYear());
+                        $scope.fromDateValue = firstDay;
+                        $scope.toDateValue   = lastDay;
+                        
+                    }
+                    else if(period == 'Current CQ'){
+                        
+                        var quarterMonth = (Math.floor((date.getMonth()-1)/3)*3)+1;
+                        var firstDay = date.getFullYear()+'-'+quarterMonth+'-'+'1';
+                        var lastDay = date.getFullYear()+'-'+(quarterMonth+2)+'-'+$scope.getDaysInMonth((quarterMonth+3),date.getFullYear());
+                        $scope.fromDateValue = firstDay;
+                        $scope.toDateValue   = lastDay;
+                    }
+                    else if(period == 'This Month'){
+                        var firstDay = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+'1';
+                        var lastDay = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+$scope.getDaysInMonth((date.getMonth()+1),date.getFullYear());
+                        $scope.fromDateValue = firstDay;
+                        $scope.toDateValue   = lastDay;
+                    }
+                    else if(period == 'This Week'){
+                        
+                        var monthStr = date.getDate() <= 7 ? date.getMonth() : (date.getMonth()+1);
+
+                        var firstDayOfWeek = date.getDate() - date.getDay(); // In this case week starts on Sunday, if it starts on Monday then--> date.getDate() - date.getDay() +1
+                        var lastDayOfWeek = firstDayOfWeek + 6;              // In this case week ends on Saturday
+                        
+                        var firstDay = date.getFullYear()+'-'+monthStr+'-'+firstDayOfWeek;
+                        var lastDay = date.getFullYear()+'-'+monthStr+'-'+lastDayOfWeek;
+                        $scope.fromDateValue = firstDay;
+                        $scope.toDateValue   = lastDay;
+                    }
+                    else if(period == 'Yesterday'){
+                        var firstDay = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+(date.getDate()-1);
+                        //var lastDay = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()-1;
+                        $scope.fromDateValue = firstDay;
+                        $scope.toDateValue   = firstDay;
+                    }
+                    else if(period == 'Today'){
+                        var firstDay = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
+                        //var lastDay = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
+                        $scope.fromDateValue = firstDay;
+                        $scope.toDateValue   = firstDay;
+                    }
+                    else if(period == 'Custom'){
+                        $scope.disableFromToDate = false;
+                        $scope.fromDateValue = '';
+                        $scope.toDateValue   = '';
+                    }
+
+                }
+
+            }
+
+            $scope.changeBranch = function(division){
+                $scope.BranchList = [];
+                if(division != null){
+                    angular.forEach($scope.DivsionAndBranch, function(value, key){
+                       //debugger;
+                        if(key == division){
+                            $scope.BranchList = value;
+                        }
+                    });
+                }
+            }
+
+            /*
+                Name    : getDaysInMonth
+                Params  : Takes 2 parameters, i.e Month and Year
+                Purpose : Returns last date of the given month and given year.
+            */
+            $scope.getDaysInMonth = function(month,year) {
+                return new Date(year, month, 0).getDate();
+            }
+
+            });
+
+            </script>
+        </body>
+    </html>
+</apex:page>

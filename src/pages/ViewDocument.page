@@ -1,0 +1,24 @@
+<apex:page controller="DMSFetchAndShow" sidebar="false" showHeader="false" cache="false">
+ <script>
+ document.getElementById('theForm').height = window.innerHeight - 20;
+        (function() { //this wrapper prevents pollution of the global scope
+            var windowOnresize = window.onresize;
+            window.onresize = function() {
+                if (windowOnresize) windowOnresize(); //don't trample the handler; intercept it
+                document.getElementById('theFrame').height = window.innerHeight - 220;
+            };
+        }());
+    </script>
+    <apex:form id="theForm">
+            
+       <!-- <iframe src="data:application/pdf;base64,{!blobPdfContent}" style="width:100%;" id="frame" frameborder="0"></iframe>-->
+        <!--<iframe src="data:{!blobPdfContent};blob,{!pdf}" style="width:100%;" id="frame" frameborder="0"></iframe>
+        <iframe src="data:{!blobPdfContent};application/pdf,{!blobPdfContent}" style="width:100%;" id="frame" frameborder="0"></iframe>-->
+        <!--<iframe src="data:{!att.ContentType};application/octet-stream,{!pdf}" ></iframe>-->
+        <!--<iframe src="data:application/pdf;base64,{!pdf}" style="width:100%;" height="200px" id="frame" frameborder="0"></iframe>-->
+        <!--iframe src="data:application/pdf;base64,{!pdfpdf}" style="width:100%;" height="100%" id="frame" frameborder="0"></iframe-->
+        <iframe src="data:application/pdf;base64,{!pdfpdf}" style="width:100%; height:700px;" id="frame" frameborder="0"></iframe>
+    </apex:form>
+    
+
+</apex:page>

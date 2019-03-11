@@ -1,0 +1,8 @@
+<apex:page showHeader="false" sidebar="false" setup="false">
+    <script>
+            function redirect(){ //http://dev-kvbnet.cs72.force.com
+                window.location.href='https://sit-kvbnet.cs58.force.com/docs/servlet/servlet.FileDownload?file='+'{!$CurrentPage.parameters.docid}';
+            }
+            window.onload = redirect;
+        </script>
+</apex:page>

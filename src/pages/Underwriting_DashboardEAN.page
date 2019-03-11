@@ -1,0 +1,29 @@
+<apex:page sidebar="false" showHeader="false" standardStylesheets="false" controller="UDDashboard">
+    <html ng-app="dashboadrdApp">
+    <title>Underwriting Dashboard</title>
+    <head>
+        <script>
+            debugger;
+            var creditScore = {!creditScoreStr};
+            var appId       = '{!appId}';
+            var sancProcess =  '{!sanprocessJson}';
+            var rAuthTypeID = '{!auditRTypeID}';
+            var rTCTypeID   = '{!auditTCRTypeID}';
+            var prerTCTypeID   = '{!auditPreTCRTypeID}';
+            var dashType    = '{!dashboardFor}';
+            var riskUser = {!riskUser};
+            console.log('creditScore');
+            console.log(creditScore);
+            console.log('sancProcess');
+            console.log(sancProcess);
+        </script>
+        <c:PageResource />
+        <script src="{!$Resource.dashboardjsEAN}"/>
+    </head>
+
+    <body ng-controller="dashboadrdCtrl">
+
+    </body>
+
+    </html>
+</apex:page>

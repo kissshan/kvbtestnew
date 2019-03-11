@@ -1,0 +1,773 @@
+<!-- termLoanFormalities -->
+<apex:page showHeader="false" sidebar="false" controller="termLoanFormalitiesCntrl"  standardStylesheets="false">
+    <html >
+        <head>
+            <title>Term Loan Formalities</title>
+            <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+            <script src="{!$Resource.angular_animate}">
+                </script>
+            <script src="{!$Resource.angularScrollable}">
+            </script>
+            <script src="{!$Resource.angular_aria}">
+            </script>
+            <script src="{!$Resource.angular_msg}">
+            </script>
+            <script src="{!$Resource.sweetalertsJs}">
+            </script>
+            <script src="{!$Resource.angular_route}">
+            </script>
+
+            <link rel="stylesheet" href="{!URLFOR($Resource.sweetalertscss)}" />
+
+
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css"/>
+            <!--<link rel="stylesheet" href="{!URLFOR($Resource.sweetalertscss)}" />-->
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+            <script src="https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.10.0.js"></script>
+
+            <script src="{!$Resource.termLoanFormalitiesJS}"></script>
+
+
+            <script type="text/javascript">
+
+            var abc = {!collStr};
+            var termLoanWrap={!termLoanWrapStr};
+            console.log(termLoanWrap);
+            console.log(abc);
+
+            </script>
+            <style>
+            .contentDiv {
+                margin-left: 1%;
+                margin-top: 2%;
+                margin-bottom: 1%;
+                margin-right: 1%;
+                border: 1px dotted black;
+                padding: 10px 10px 10px 10px;
+
+            }
+
+                /* Absolute Center Spinner */
+                .loading {
+                position: fixed;
+                z-index: 999;
+                height: 2em;
+                width: 2em;
+                overflow: visible;
+                margin: auto;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                right: 0;
+                }
+
+                /* Transparent Overlay */
+                .loading:before {
+                content: '';
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.3);
+                }
+
+                /* :not(:required) hides these rules from IE9 and below */
+                .loading:not(:required) {
+                /* hide "loading..." text */
+                font: 0/0 a;
+                color: transparent;
+                text-shadow: none;
+                background-color: transparent;
+                border: 0;
+                }
+
+                .loading:not(:required):after {
+                content: '';
+                display: block;
+                font-size: 10px;
+                width: 1em;
+                height: 1em;
+                margin-top: -0.5em;
+                -webkit-animation: spinner 1500ms infinite linear;
+                -moz-animation: spinner 1500ms infinite linear;
+                -ms-animation: spinner 1500ms infinite linear;
+                -o-animation: spinner 1500ms infinite linear;
+                animation: spinner 1500ms infinite linear;
+                border-radius: 0.5em;
+                -webkit-box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.5) -1.5em 0 0 0, rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
+                box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) -1.5em 0 0 0, rgba(0, 0, 0, 0.75) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
+                }
+
+                /* Animation */
+
+                @-webkit-keyframes spinner {
+                0% {
+                -webkit-transform: rotate(0deg);
+                -moz-transform: rotate(0deg);
+                -ms-transform: rotate(0deg);
+                -o-transform: rotate(0deg);
+                transform: rotate(0deg);
+                }
+                100% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg);
+                }
+                }
+                @-moz-keyframes spinner {
+                0% {
+                -webkit-transform: rotate(0deg);
+                -moz-transform: rotate(0deg);
+                -ms-transform: rotate(0deg);
+                -o-transform: rotate(0deg);
+                transform: rotate(0deg);
+                }
+                100% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg);
+                }
+                }
+                @-o-keyframes spinner {
+                0% {
+                -webkit-transform: rotate(0deg);
+                -moz-transform: rotate(0deg);
+                -ms-transform: rotate(0deg);
+                -o-transform: rotate(0deg);
+                transform: rotate(0deg);
+                }
+                100% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg);
+                }
+                }
+                @keyframes spinner {
+                0% {
+                -webkit-transform: rotate(0deg);
+                -moz-transform: rotate(0deg);
+                -ms-transform: rotate(0deg);
+                -o-transform: rotate(0deg);
+                transform: rotate(0deg);
+                }
+                100% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg);
+                }
+                }
+
+            </style>
+        </head>
+
+        <body ng-app="termLoanFormalitiesApp" ng-controller="LBctrl">
+            <div class="loading" ng-show="loader">Loading&#8230;</div>
+            <h2 style="background: darkgray;padding:1%;text-align:center;margin:1%">Term Loan Details</h2>
+
+            <div  style="margin:2%">
+
+
+                <div class="contentDiv" style="margin-top:2%;">
+                    <div class="row">
+                        <div class="col-sm-4" style="float:right">
+                            <b>Customer Name :</b>{{appRecord.genesis__Account__r.Name}}
+                        </div>
+                        <div class="col-sm-4" style="float:right">
+                            <b>Application Number :</b>{{appRecord.Name}}
+                        </div>
+                        <div class="col-sm-4" style="float:right">
+                            <b>Application Stage :</b>{{appRecord.Application_Stage__c}}
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-test" >
+
+
+
+                    <accordion close-others="oneAtATime">
+
+                        <div ng-repeat="item in landAndBulidingCollat  | orderBy:'Collateral_Record_Type__c' | groupBy:'Collateral_Record_Type__c'" >
+                            <accordion-group heading="{{item.Name }} -- {{item.RecordType.DeveloperName}}">
+                                <!-- Non Editable Fields -->
+                                <div class="row">
+                                    <div class="col-sm-2" style="float:right">
+                                        <button ng-disabled="isPageNonEditable" type="submit" class="btn btn-success" style="float:right" ng-click="editCollRec(item)"> <span class="glyphicon glyphicon-pencil"></span> Edit Details </button>
+                                    </div>
+                                </div>
+                                <div class="row"  ng-show="item.Collateral_Record_Type__c == 'Commercial_Vehicle' || item.Collateral_Record_Type__c == 'Passenger_Vehicle'">
+                                    <div class="col-sm-3" >
+                                        <b>Name :</b>{{item.clcommon__Collateral_Name__c}}
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <b>Make :</b>{{item.clcommon__Make__c}}
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <b>State :</b>{{item.clcommon__State__c}}
+                                    </div>
+
+
+                                </div>
+                                <div class="row" ng-show="item.Collateral_Record_Type__c == 'Commercial_Vehicle' || item.Collateral_Record_Type__c == 'Passenger_Vehicle'">
+                                     <div class="col-sm-3" >
+                                        <b>City :</b>{{item.clcommon__City__c}}
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <b>Model :</b>{{item.clcommon__Model__c}}
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <b>Varient :</b>{{item.Variant__c}}
+                                    </div>
+                                </div>
+
+                                <div class="row" ng-show="item.Collateral_Record_Type__c =='Commercial_Machinery' || item.Collateral_Record_Type__c=='Other' ||item.Collateral_Record_Type__c =='Construction_Equipment'">
+                                    <div class="col-sm-3">
+                                        <div ng-show="item.Collateral_Record_Type__c =='Commercial_Machinery'">
+                                            <b>	Nature of Machinary :</b>{{item.Nature_of_Machinery__c}}
+                                        </div>
+
+                                        <div ng-show="item.Collateral_Record_Type__c =='Construction_Equipment'">
+                                            <b>	Nature of Machinary :</b>{{item.Nature_of_Construction_Equipment__c}}
+                                        </div>
+                                        <div ng-show="item.Collateral_Record_Type__c =='Other'">
+                                            <b>	Nature of Machinary :</b>{{item.Nature_of_Others__c}}
+                                        </div>
+
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <b>	Name Of Manufacturer : </b>{{item.clcommon__Make__c}}
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <b>Model :</b>{{item.clcommon__Model__c}}
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-3" >
+                                        <b>Dealer Name :</b>{{item.Dealer_name__c}}
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <b>Dealer Address :</b>{{item.Dealer_Address__c}}
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <b>Dealer Pin Code :</b>{{item.Dealer_Pincode__c}}
+                                    </div>
+                                </div>
+
+                                <div class="row" ng-show="item.Collateral_Record_Type__c == 'Commercial_Vehicle'">
+                                    <div class="col-sm-3" >
+                                        <b>Chasis Cost :</b>{{item.Chassis_Cost__c}}
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <b>Body Building Cost :</b>{{item.Body_Building_Cost__c}}
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <b>Other Cost :</b>{{item.Other_Cost__c}}
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <b>Tax :</b>{{item.Tax__c}}
+                                    </div>
+                                </div>
+
+                                <div class="row" ng-show="item.Collateral_Record_Type__c == 'Passenger_Vehicle'">
+                                    <div class="col-sm-3" >
+                                        <b>Ex-Showroom Price :</b>{{item.ExshowRoomPrice_Api__c}}
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <b>Accessories Cost :</b>{{item.Accessories_value__c}}
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <b>Registration Cost :</b>{{item.Registration_cost__c}}
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <b>Insurence Cost :</b>{{item.clcommon__Insurance_Amount__c}}
+                                    </div>
+                                </div>
+
+
+                                <div class="row" ng-show="item.Collateral_Record_Type__c =='Commercial_Machinery' || item.Collateral_Record_Type__c=='Other' ||item.Collateral_Record_Type__c =='Construction_Equipment'">
+                                    <div class="col-sm-3" >
+                                        <b>	Machinery Cost :</b>{{item.Machinery_Cost__c}}
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <b>	Installation Cost :</b>{{item.Installation_Cost__c}}
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <b>Other Cost :</b>{{item.Other_Cost__c}}
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <b>Tax :</b>{{item.Tax__c}}
+                                    </div>
+
+                                </div>
+                                 <br/>
+                                <div ng-show="item.editable">
+
+                                    <div class="row"></div>
+                                   <!-- <div class="row" ng-show="item.Collateral_Record_Type__c =='Passenger_Vehicle'" >
+                                        <div class="col-sm-2" style="float:right" >
+                                            <button type="submit" class="btn btn-primary" style="margin-top:8%" ng-click="getDealerInfo(item)"> Get Dealer Info</button>
+                                        </div>
+                                    </div>-->
+
+
+                                    <!-- Editable Fields -->
+
+                                    <div class="row">
+                                        <ng-form name="subform{{$index}}">
+                                            <div class="form-group col-sm-4"  ng-show="item.Collateral_Record_Type__c =='Land_And_Building'">
+                                                <label for="email">Categorey Of Loan</label>
+                                                <select ng-model="item.Category_of_Loan__c" class="form-control" ng-disabled="!isPageNonEditable" >
+                                                    <option ng-repeat="x in loanCats" value="{{x}}">{{x}}</option>
+                                                </select>
+                                            </div>
+                                        </ng-form>
+                                    </div>
+                                    <div class="row"></div>
+                                    <!-- Fields Related to Dealer-->
+
+                                    <!-- Cost Field Only for CM/CE / Others-->
+                                     <div class="row" ng-show=" item.Collateral_Record_Type__c =='Commercial_Machinery' ||  item.Collateral_Record_Type__c == 'Construction_Equipment' || item.Collateral_Record_Type__c == 'Other' ">
+
+                                         <div class="form-group col-sm-2">
+                                            <div ng-show="item.Collateral_Record_Type__c =='Commercial_Machinery'">
+                                                <label for="email" >Nature of Machinary :</label>
+                                                <input type="text" class="form-control" ng-model="item.Nature_of_Machinery__c" />
+                                            </div>
+                                            <div ng-show="item.Collateral_Record_Type__c =='Construction_Equipment'">
+                                                <label for="email" >Nature of Machinary :</label>
+                                                <input type="text" class="form-control" ng-model="item.Nature_of_Construction_Equipment__c" />
+                                            </div>
+                                            <div ng-show="item.Collateral_Record_Type__c =='Other'">
+                                                <label for="email" >Nature of Machinary :</label>
+                                                <input type="text" class="form-control" ng-model="item.Nature_of_Others__c" />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group col-sm-2">
+                                            <label for="email" >Name Of Manufacturer :</label>
+                                            <input type="text" class="form-control" ng-model="item.clcommon__Make__c" />
+                                        </div>
+                                         <div class="form-group col-sm-2">
+                                            <label for="email" >Model</label>
+                                            <input type="text" class="form-control" ng-model="item.clcommon__Model__c" />
+                                        </div>
+
+                                    </div>
+                                    <div class="row" ng-show=" item.Collateral_Record_Type__c =='Commercial_Machinery' ||  item.Collateral_Record_Type__c == 'Construction_Equipment' || item.Collateral_Record_Type__c == 'Other' ">
+                                        <div class="form-group col-sm-2">
+                                            <label for="email" > Machinery Cost</label>
+                                            <input type="number" class="form-control" ng-model="item.Machinery_Cost__c" />
+                                        </div>
+                                        <div class="form-group col-sm-2">
+                                            <label for="email" >Installation Cost</label>
+                                            <input type="number" class="form-control" ng-model="item.Installation_Cost__c" />
+                                        </div>
+                                        <div class="form-group col-sm-2" >
+                                            <label for="email" >Other Cost</label>
+                                            <input type="number" class="form-control" ng-model="item.Other_Cost__c" />
+                                        </div>
+                                        <div class="form-group col-sm-2" >
+                                            <label for="email" >Tax</label>
+                                            <input type="number" class="form-control" ng-model="item.Tax__c" />
+                                        </div>
+                                    </div>
+
+                                    <div class="row"></div>
+
+                                    <!-- These fields are non-editable for PV/CV-->
+
+                                    <div class="row">
+                                        <div class="col-sm-2">
+                                            <div class="form-group" ng-show="item.Collateral_Record_Type__c != 'Commercial_Vehicle' && item.Collateral_Record_Type__c !='Passenger_Vehicle' ">
+                                                <label for="email">Dealer KYC</label>
+                                                <select ng-model="item.GST_PAN__c" class="form-control" >
+                                                    <option ng-repeat="x in dealerKyc" value="{{x}}">{{x}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-sm-2" ng-show="item.GST_PAN__c !=undefined && item.GST_PAN__c == 'PAN' && (item.Collateral_Record_Type__c != 'Commercial_Vehicle' && item.Collateral_Record_Type__c !='Passenger_Vehicle' )">
+                                            <div class="form-group" ng-show="item.Collateral_Record_Type__c =='Passenger_Vehicle' || item.Collateral_Record_Type__c=='Land_And_Building' || item.Collateral_Record_Type__c =='Commercial_Machinery' || item.Collateral_Record_Type__c == 'Construction_Equipment'">
+                                                <label for="email" >Enter Pan</label>
+
+                                                <input type="text" class="form-control" ng-model="item.Dealer_PAN_Number__c" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3" ng-show="item.GST_PAN__c !=undefined && item.GST_PAN__c == 'GST' && (item.Collateral_Record_Type__c != 'Commercial_Vehicle' && item.Collateral_Record_Type__c !='Passenger_Vehicle' )">
+                                            <div class="form-group" ng-show="item.Collateral_Record_Type__c =='Passenger_Vehicle' || item.Collateral_Record_Type__c=='Land_And_Building' || item.Collateral_Record_Type__c =='Commercial_Machinery' || item.Collateral_Record_Type__c == 'Construction_Equipment'">
+                                                <label for="email" >Enter GST</label>
+
+                                                <input type="text" class="form-control" ng-model="item.Dealer_GST_Number__c"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-3" ng-show="item.Collateral_Record_Type__c =='Commercial_Machinery' || item.Collateral_Record_Type__c =='Land_And_Building' || item.Collateral_Record_Type__c =='Construction_Equipment' || item.Collateral_Record_Type__c =='Other'">
+
+                                            <button type="submit" class="btn btn-primary" style="margin-top:8%" ng-click="getDealerInfo(item)" ng-show="item.GST_PAN__c=='GST' "> GST Verify</button>
+                                            <button type="submit" class="btn btn-primary" style="margin-top:8%" ng-click="getDealerInfo(item)" ng-show="item.GST_PAN__c=='PAN'  "> PAN Verify</button>
+
+                                        </div>
+                                    </div>
+                                    <div class="row" ng-show="item.Collateral_Record_Type__c =='Commercial_Machinery' || item.Collateral_Record_Type__c=='Other' ||item.Collateral_Record_Type__c =='Construction_Equipment'">
+                                        <div class="col-sm-2">
+                                            <div class="form-group" >
+                                                <label for="email">Select Dealer Name</label>
+
+
+                                                <select ng-model="item.Dealer_name__c" class="form-control">
+
+                                                    <option ng-repeat="x in DealerNames" value="{{x}}">{{x}}</option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-2" ng-show="item.GST_PAN__c !=undefined && item.GST_PAN__c == 'PAN'">
+                                            <div class="form-group" >
+                                                <label for="email">Enter Dealer Address</label>
+                                                <input type="text" class="form-control" ng-model="item.Dealer_Address__c" />
+
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2" ng-show="item.GST_PAN__c !=undefined && item.GST_PAN__c == 'PAN'">
+                                            <div class="form-group" >
+                                                <label for="email">Enter Dealer PIN Code</label>
+                                                <input type="text" class="form-control" ng-model="item.Dealer_Pincode__c" />
+
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2" ng-show="item.GST_PAN__c !=undefined && item.GST_PAN__c == 'GST'">
+                                            <div class="form-group" >
+                                                <label for="email"> Dealer Address</label>
+                                                <input type="text" class="form-control" ng-model="item.Dealer_Address__c" ng-disabled="true"/>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <!-- These fields are editable for PV/CV-->
+
+                                    <div class="row">
+
+                                        <div class="col-sm-3" >
+                                            <div class="form-group" ng-show="(item.Collateral_Record_Type__c =='Passenger_Vehicle' )">
+                                                <label for="email">Select State</label>
+
+
+                                                <select ng-model="item.State__c" class="form-control" ng-change="getCitiesForPV(item.State__c)">
+
+                                                    <option ng-repeat="x in stateList" value="{{x.StateId}}">{{x.StateName}}</option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3" >
+                                            <div class="form-group" ng-show="(item.Collateral_Record_Type__c =='Passenger_Vehicle' )">
+                                                <label for="email">Select City</label>
+
+
+                                                <select ng-model="item.clcommon__City__c" class="form-control">
+
+                                                    <option ng-repeat="x in cityList" value="{{x.CityId}}">{{x.CityName}}</option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3" >
+                                            <div class="form-group" ng-show="(item.Collateral_Record_Type__c =='Passenger_Vehicle' )">
+                                                <label for="email">Select Make</label>
+
+
+                                                <select ng-model="item.clcommon__Make__c" class="form-control" ng-change="getModelForPV(item.clcommon__Make__c)">
+
+                                                    <option ng-repeat="x in allMakeList" value="{{x.id}}">{{x.name}}</option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3" >
+                                            <div class="form-group" ng-show="(item.Collateral_Record_Type__c =='Passenger_Vehicle' )">
+                                                <label for="email">Select Model</label>
+
+
+                                                <select ng-model="item.clcommon__Model__c" class="form-control" ng-change="getVersionForPV(item.clcommon__Model__c);getDealersForPV(item.clcommon__Make__c,item.clcommon__City__c)">
+
+                                                    <option ng-repeat="x in allModelList" value="{{x.Id}}">{{x.model}}</option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3" >
+                                            <div class="form-group" ng-show="(item.Collateral_Record_Type__c =='Passenger_Vehicle' )">
+                                                <label for="email">Select Varient</label>
+
+
+                                                <select ng-model="item.version" class="form-control" ng-change="getPriceForPV(item.version,item.clcommon__City__c,item)">
+
+                                                    <option ng-repeat="x in allVersionList" value="{{x.versionId}}">{{x.versionName}}</option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3" >
+                                            <div class="form-group" ng-show="(item.Collateral_Record_Type__c =='Passenger_Vehicle' )">
+                                                <label for="email">Select Dealer Name</label>
+
+
+                                                <select ng-model="item.Dealer_name__c" class="form-control">
+
+                                                    <option ng-repeat="x in PVDealerNames" value="{{x}}">{{x}}</option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <!-- Cost Field Only for CV -->
+
+                                    <!-- Select Make-->
+
+                                    <div class="row" ng-show="item.Collateral_Record_Type__c == 'Commercial_Vehicle' ">
+                                        <div class="col-sm-3" >
+                                            <div class="form-group" ng-show="item.Type_of_Commercial_Vehicle__c == 'Bus/Vans/Auto'">
+                                                <label for="email">Select Make</label>
+
+
+                                                <select ng-model="item.clcommon__Make__c" class="form-control" ng-change="getCityCV(item.clcommon__Make__c,'BUS');getCVModel(item.clcommon__Make__c,'BUS')">
+
+                                                    <option ng-repeat="x in allBuskmakeList" value="{{x.link_rewrite}}">{{x.name}}</option>
+
+                                                </select>
+                                            </div>
+                                            <div class="form-group" ng-show="item.Type_of_Commercial_Vehicle__c == 'Trucks/Others'">
+                                                <label for="email">Select Make</label>
+
+
+                                                <select ng-model="item.clcommon__Make__c" class="form-control" ng-change="getCityCV(item.clcommon__Make__c,'TRUCK');getCVModel(item.clcommon__Make__c,'BUS')">
+
+                                                    <option ng-repeat="x in allTruckmakeList" value="{{x.link_rewrite}}">{{x.name}}</option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-3" >
+                                            <div class="form-group" ng-show="item.Type_of_Commercial_Vehicle__c == 'Bus/Vans/Auto'">
+                                                <label for="email">Select Model</label>
+
+
+                                                <select ng-model="item.clcommon__Model__c" class="form-control" ng-change="getCVVarient(item.clcommon__Make__c,item.clcommon__Model__c,'BUS')">
+
+                                                    <option ng-repeat="x in allBusModelList" value="{{x.model_link_rewrite}}">{{x.name}}</option>
+
+                                                </select>
+                                            </div>
+                                            <div class="form-group" ng-show="item.Type_of_Commercial_Vehicle__c == 'Trucks/Others'">
+                                                <label for="email">Select Model</label>
+
+
+                                                <select ng-model="item.clcommon__Model__c" class="form-control" ng-change="getCVVarient(item.clcommon__Make__c,item.clcommon__Model__c,'BUS')">
+
+                                                    <option ng-repeat="x in allTruckModelList" value="{{x.model_link_rewrite}}">{{x.name}}</option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-3" >
+                                            <div class="form-group" ng-show="item.Type_of_Commercial_Vehicle__c == 'Bus/Vans/Auto'">
+                                                <label for="email">Select Varient</label>
+
+
+                                                <select ng-model="item.Variant__c" class="form-control" ng-change="fillValuesForCV(item,'BUS')">
+
+                                                    <option ng-repeat="x in allCVBusVarient" value="{{x.variantLinkRewrite}}">{{x.name}}</option>
+
+                                                </select>
+                                            </div>
+                                            <div class="form-group" ng-show="item.Type_of_Commercial_Vehicle__c == 'Trucks/Others'">
+                                                <label for="email">Select Varient</label>
+
+
+                                                <select ng-model="item.Variant__c" class="form-control" ng-change="fillValuesForCV(item,'TRUCK')">
+
+                                                    <option ng-repeat="x in allCVTruckVarient" value="{{x.variantLinkRewrite}}">{{x.name}}</option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+
+                                    <!-- Select City-->
+
+                                    <div class="row" ng-show="item.Collateral_Record_Type__c == 'Commercial_Vehicle' && item.Type_of_Commercial_Vehicle__c == 'Bus/Vans/Auto'">
+                                        <div class="form-group col-sm-3" >
+                                            <label for="email">Select City</label>
+
+
+                                            <select ng-model="item.clcommon__City__c" class="form-control" ng-change="getDealerInfoForCV('BUS',item.clcommon__Make__c,item.clcommon__City__c)">
+
+                                                <option ng-repeat="x in allBuskCityList" value="{{x.link_rewrite}}">{{x.name}}</option>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row" ng-show="item.Collateral_Record_Type__c == 'Commercial_Vehicle' && item.Type_of_Commercial_Vehicle__c == 'Trucks/Others'">
+                                        <div class="form-group col-sm-3" >
+                                            <label for="email">Select City</label>
+
+
+                                            <select ng-model="item.clcommon__City__c" class="form-control" ng-change="getDealerInfoForCV('TRUCK',item.clcommon__Make__c,item.clcommon__City__c)">
+
+                                                <option ng-repeat="x in allTruckCityList" value="{{x.link_rewrite}}">{{x.name}}</option>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row" ng-show="item.Collateral_Record_Type__c == 'Commercial_Vehicle' ">
+
+                                        <div class="col-sm-3" >
+                                            <div class="form-group" ng-show="item.Type_of_Commercial_Vehicle__c == 'Bus/Vans/Auto'">
+                                                <label for="email">Select Dealer Name</label>
+
+
+                                                <select ng-model="item.Dealer_name__c" class="form-control" ng-change="changeCvdealerAdd('BUS',item.Dealer_name__c)">
+
+                                                    <option ng-repeat="x in allBusdealerName" value="{{x}}">{{x}}</option>
+
+                                                </select>
+                                            </div>
+                                            <div class="form-group" ng-show="item.Type_of_Commercial_Vehicle__c == 'Trucks/Others'">
+                                                <label for="email">Select Dealer Name</label>
+
+
+                                                <select ng-model="item.Dealer_name__c" class="form-control" ng-change="changeCvdealerAdd('TRUCK',item.Dealer_name__c)">
+
+                                                    <option ng-repeat="x in alltruckdealerName" value="{{x}}">{{x}}</option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3" >
+                                            <div class="form-group" ng-show="item.Type_of_Commercial_Vehicle__c == 'Bus/Vans/Auto'">
+                                                <label for="email">Select Dealer Address</label>
+
+
+                                                <select ng-model="item.Dealer_Address__c" class="form-control">
+
+                                                    <option ng-repeat="x in allBusdealerAddress" value="{{x}}">{{x}}</option>
+
+                                                </select>
+                                            </div>
+                                            <div class="form-group" ng-show="item.Type_of_Commercial_Vehicle__c == 'Trucks/Others'">
+                                                <label for="email">Select Dealer Address</label>
+
+
+                                                <select ng-model="item.Dealer_Address__c" class="form-control">
+
+                                                    <option ng-repeat="x in alltruckdealerAddress" value="{{x}}">{{x}}</option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+									<!-- Cost Field Only for CV -->
+
+
+                                    <div class="row" ng-show="item.Collateral_Record_Type__c == 'Commercial_Vehicle'">
+                                        <div class="col-sm-3" >
+                                            <div class="form-group" >
+                                                <label for="email" >Chassis Cost</label>
+                                                <input type="number" class="form-control" ng-model="item.Chassis_Cost__c" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-sm-3" >
+                                            <label for="email" >Body Building Cost</label>
+                                            <input type="number" class="form-control" ng-model="item.Body_Building_Cost__c" />
+                                        </div>
+                                        <div class="form-group col-sm-3" >
+                                            <label for="email" >Other Cost</label>
+                                            <input type="number" class="form-control" ng-model="item.Other_Cost__c" />
+                                        </div>
+										<div class="form-group col-sm-3" >
+                                            <label for="email" >Tax</label>
+                                            <input type="number" class="form-control" ng-model="item.Tax__c" />
+                                        </div>
+                                    </div>
+
+
+
+
+                                    <div class="row"></div>
+                                    <!-- Cost Field Only for PV -->
+                                    <div class="row" ng-show="item.Collateral_Record_Type__c == 'Passenger_Vehicle'">
+										<div class="form-group col-sm-3" >
+                                            <label for="email" >Ex - showroom Price</label>
+                                            <input type="number" class="form-control" ng-model="item.ExShow_Room_Price__c" />
+                                        </div>
+                                        <div class="form-group col-sm-3" >
+                                            <label for="email" >Accessory Cost</label>
+                                            <input type="number" class="form-control" ng-model="item.Accessories_value__c" />
+                                        </div>
+                                        <div class="form-group col-sm-3" >
+                                            <label for="email" >Registration Cost</label>
+                                            <input type="number" class="form-control" ng-model="item.Registration_cost__c" />
+                                        </div>
+                                        <div class="form-group col-sm-2" >
+                                            <label for="email" >Insurance Cost	</label>
+                                            <input type="number" class="form-control" ng-model="item.clcommon__Insurance_Amount__c" />
+                                        </div>
+
+                                    </div>
+                                    <div class="row"></div>
+                                    <!-- Save Collateral Buttons -->
+                                    <div class="row">
+                                        <div class="col-sm-2" style="float:right" >
+                                            <button type="submit" class="btn btn-success" style="margin-top:8%" ng-click="saveCollInfo(item,$index)" ng-disabled="isPageNonEditable"> Save Collateral Info</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </accordion-group>
+
+                            <div class="row"></div>
+                        </div>
+
+                    </accordion>
+                    <div class="row" >
+                        <div class="col-sm-4" style="margin-left: 40%" >
+                            <button type="submit" class="btn btn-success" style="margin-top:8%" ng-click="closeTask()" ng-disabled="isPageNonEditable"><span class="glyphicon glyphicon-ok"></span> Submit All Info</button>
+<!--
+                            <button type="submit" class="btn btn-success" style="margin-top:8%" ng-click="refferBack()" ng-disabled="isPageNonEditable"> <span class="glyphicon glyphicon-menu-left"></span> Refer back to Customer</button>
+-->
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </body>
+    </html>
+</apex:page>

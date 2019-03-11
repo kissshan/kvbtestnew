@@ -1,0 +1,191 @@
+<apex:page controller="CommitteeCreationHandler" sidebar="false" showHeader="false" standardStylesheets="false" action="{!onLoad}">
+    
+    <html>
+        <head>
+            <style>
+            body{
+                overflow-x: hidden;
+                margin-top: 30px;
+                box-shadow: 1px 2px 13px 20px #eee;
+                padding: 2%;
+                font-family: sans-serif;    
+            }    
+            .container{
+               
+                
+                margin-left:31%;
+               
+            }
+            .marginTop{
+                margin-top:30px;   
+             }
+             .marginLeft{
+                margin-left:10%;   
+             }   
+            select{
+                width:200px;
+                height:200px;   
+                padding:3px;
+                border:1px solid #6bc4d5;
+            }
+            select option{
+                padding:2px 0px;
+            }    
+            .blockOne{
+                
+                border-radius: 5px;
+                float:left;
+            }
+            .blockTwo{
+                margin-left:1%;
+                margin-right:1%;
+                float:left;
+            }    
+                .blockTwo  input[type="button"],input[type="button"]{
+                    margin-bottom: 10px;
+                    background: #6bc4d5;
+                    color: #fff;
+                    border: 2px solid #fff;
+                    border-radius: 5px;
+                    width: 40px;
+                    font-weight:bold;
+                    cursor:pointer;
+                 }
+                #save{
+                    width:100px;
+                height:40px;
+                }
+                .subHeader {
+                color: #fff;
+                background: #6bc4d5;
+                margin: 0;
+                padding-top: 5px;
+                padding-left: 8px;
+                padding-bottom: 5px;
+                border-radius: 4px;
+            }
+            </style>
+            <script>
+        
+            </script>
+            <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    
+            <script>
+            var DOCO_Flag = {!DOCO_Flag};
+            //console.log(DOCO_Flag);
+            if(DOCO_Flag){
+                alert('insufficient privilege for committee creation!!!');
+            	window.location = window.location.protocol + "//" + window.location.host;
+            }
+            var userList = {!userListformat};
+            var userListSel = [];
+            for(var uCount= 0 ; uCount < userList.length; uCount++){
+                var user = new Object();
+                user.name = userList[uCount].Name;
+                user.Id = userList[uCount].Id;
+                user.Division = userList[uCount].Division;
+                userListSel.push(user);
+            }
+                $(function () { function moveItems(origin, dest) {
+                    $(origin).find(':selected').appendTo(dest);
+                }
+                 
+                function moveAllItems(origin, dest) {
+                    $(origin).children().appendTo(dest);
+                }
+                 
+                $('#left').click(function () {
+                    moveItems('#sbTwo', '#sbOne');
+                });
+                 
+                $('#right').on('click', function () {
+                    moveItems('#sbOne', '#sbTwo');
+                });
+                 
+                $('#leftall').on('click', function () {
+                    moveAllItems('#sbTwo', '#sbOne');
+                });
+                 
+                $('#rightall').on('click', function () {
+                    moveAllItems('#sbOne', '#sbTwo');
+                });
+                });    
+            </script>
+        </head>
+        <body>
+             <div class="header">
+                <h4 class="subHeader">
+                    Committee Creation
+                </h4>
+            </div>
+            
+           <div class="container marginTop ">
+                <div class="blockOne ">
+                 <p>
+                    Available Users    
+                 </p>   
+                <select id="sbOne" multiple="multiple">
+            
+                </select>    
+            </div>
+            <div class="blockTwo  marginLeft" style="margin-top:60px">
+                <input type="button" id="right" value=">" /><br/>
+                <input type="button" id="rightall" value=">>" /><br/>
+                <input type="button" id="left" value="<" /><br/>
+                <input type="button" id="leftall" value="<<" /><br/>
+               
+                        
+    
+            </div>
+            <div class="blockOne ">
+                <p>
+                    Selected Users    
+                 </p>
+                <select id="sbTwo" multiple="multiple">
+        
+                </select>
+            </div>
+             
+            </div> 
+              <div style="width:100%;text-align:center;clear:both;padding-top:30px">
+                   <input type="button" id="save" value="SAVE" /><br/>
+                   
+               </div>
+            <script>
+            var userListToSave = [];
+                $.each(userListSel, function(index, user) {
+                    console.log(userListSel);
+                  $('#sbOne')
+                    .append($("<option></option>")
+                    .attr("value",user.Id)
+                    .text(user.name)); 
+                });
+            
+                $("#save").on("click",function(){
+                    $('#sbTwo option').each(function() {
+                        var user = new Object();
+                        user.Id = $(this).val();
+                        user.name = $(this).text();
+                        //user.Division = $(this).Division();
+                        userListToSave.push(user);
+                        
+                    });
+                     Visualforce.remoting.Manager.invokeAction(
+                           "CommitteeCreationHandler.userSaveList",userListToSave ,
+                                function(result, event) {
+                                    if(result) {
+                                        window.location = window.location.protocol + "//" + window.location.host + "/"+result;
+                                    } else {
+                                        console.log("There was an error");
+                                        alert("Select a user!!!");
+                                    } 
+                                },
+                             {escape: false} // No escaping, please
+                          );
+
+
+                })
+            </script>
+        </body>
+   </html>
+</apex:page>

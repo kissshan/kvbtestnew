@@ -1,0 +1,111 @@
+<apex:page showHeader="false" sidebar="false" controller="AttachmentUploadController">
+    <script type="text/javascript">__sfdcSessionId = '{!$Api.Session_Id}';</script>
+    <script src="../../soap/ajax/30.0/connection.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script language="JavaScript">
+		var filenamee='';
+        function uploadContentVersion(filename, filecontent) {
+            debugger;
+            console.log('Inside function::'+filename+':::'+filecontent);
+            var attachment         = new sforce.SObject('Attachment');
+            attachment.ContentType = filenamee;
+            //alert(filenamee);
+            filenamee = filenamee.split('/')[1];
+            attachment.Name        = '{!digioDocumentId.Name}'+'.'+filenamee;
+            attachment.IsPrivate   = false;
+            //attachment.ContentType = filenamee;
+            attachment.Body        = filecontent;
+            attachment.Description = filename;
+            attachment.ParentId    = '{!appRecord.Id}';
+            if('{!digioDocumentId.Document_ID__c}' != null && '{!digioDocumentId.Document_ID__c}' !='')
+              attachment.Id =   '{!digioDocumentId.Document_ID__c}';
+            
+            var results = sforce.connection.upsert("Id",[attachment]);
+            
+            for (var i = 0; i < results.length; i++) {
+                if (results[i].getBoolean("success")) {
+                    alert('File Uploaded Successfully');
+                    var digiorec         = new sforce.SObject('Digio_Document_ID__c');
+                    digiorec.Id = '{!digioDocumentId.Id}';
+                    digiorec.Document_ID__c = results[i].id;
+                    digiorec.Attachment_Uploaded__c = true;
+                    sforce.connection.update([digiorec]);
+                    
+                    
+                }
+                else {
+                    alert('File Upload failed');
+
+                }
+            }
+            
+        }
+        function fileSelected() {
+             var file = document.getElementById('fileToUpload').files[0];
+            if (file) {
+                var fileSize = 0;
+                if (file.size > (36 * 1024 * 1024)) {
+                    alert('File too large, greater than 36MB');
+                    return;
+                }
+                if (file.size > 1024 * 1024)
+                    fileSize = (Math.round(file.size * 100 / (1024 * 1024)) / 100).toString() + 'MB';
+                else
+                    fileSize = (Math.round(file.size * 100 / 1024) / 100).toString() + 'KB';
+				filenamee = file.type;
+                document.getElementById('fileName').innerHTML = 'Name: ' + file.name;
+                document.getElementById('fileSize').innerHTML = 'Size: ' + fileSize;
+                document.getElementById('fileType').innerHTML = 'Type: ' + file.type;
+            }
+        }
+
+        function uploadFile() {
+            var file = document.getElementById('fileToUpload').files[0];
+            var reader = new FileReader();
+            reader.onload = loaded;
+            reader.onerror = errorHandler;
+            reader.readAsDataURL(file);           
+        }
+
+        function loaded(evt) {
+            var filename = document.getElementById('fileToUpload').files[0].name;
+            var fileContent = String(evt.target.result);
+            fileContent = fileContent.substr(fileContent.indexOf(',') + 1);
+            uploadContentVersion(filename, fileContent);  
+        }
+
+        function errorHandler(evt) {
+            if (evt.target.error.name == 'NotReadableError') {
+                alert('File could not be read');
+            }
+            else {
+                alert(evt.target.error);
+            }
+        }
+        function reloadPage(){
+            window.open('/'+'{!appRecord.Id}','_blank');
+        }
+
+</script>
+
+    <br/>
+    <br/>
+    
+    <input type="button"  class='btn-primary' value="GO To - {!appRecord.Name}" onclick="reloadPage()"/>
+    <br/>
+    <br/>
+    <form id="form1" enctype="multipart/form-data" method="post">
+        <div class="row" style="margin-left:30%">
+          <label for="fileToUpload">Select a File to Upload</label><br />
+          <input type="file"  name="fileToUpload" id="fileToUpload" onchange="fileSelected();"/>
+            <div id="fileType"></div>
+        </div>
+        <br/>
+    <br/>
+        <div class="row" style="margin-left:30%">
+            <input type="button" onclick="uploadFile()" class='btn-success' value="Upload" style="align:center"/>
+        </div>
+  </form>
+</apex:page>

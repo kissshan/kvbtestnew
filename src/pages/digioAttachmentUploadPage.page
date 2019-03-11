@@ -1,0 +1,204 @@
+<apex:page showHeader="false" sidebar="false" controller="digioAttachmentUpload">
+    <html>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+        <style>
+            .loadingBackground{
+                position: fixed;
+                height: 100%;
+                width: 100%;
+                background: #F6F6F6;
+                z-index: 111111;
+                opacity: 0.7;
+                top: 0px;
+                left:0;
+                bottom:0;
+                right:0; 
+            }
+        
+        .loading{
+            width: 10%;
+            top: 50%;
+            left: 50%;
+            margin: -50px 0px 0px -50px;
+            z-index: 1111111;
+            position: fixed;
+        }
+        </style>
+        <body>
+            
+            <div ng-app="myApp" ng-controller="myCtrl">
+                <br/>
+                <br/>
+                <br/>
+                
+                <table class="table table-striped table-bordered table-hover table-condensed">
+                    <tr>
+                    <td>Upload Document</td>
+                    <td>Document Name</td>
+                    <td>Signed by Customer and Uploaded</td>
+                    <td>Document Complete?</td>
+                    <td>Reviewer Comments</td>
+                    
+                    </tr>
+                    <tr ng-repeat="thing in allDigiorecords">
+                        
+                        <td> <input type="file" id="{{thing.Id}}"  digiorecordid="{{thing.Id}}"  onchange="angular.element(this).scope().uploadfile(this)"><!--<span class="glyphicon glyphicon-envelope"></span>--></input></td>
+                        <td>{{thing.Name}}</td>
+                        <td>
+                            <select ng-model="thing.Signed_by_Customer_Uploaded__c">
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                                </select>
+                                </td>
+                                <td><input type="checkbox" ng-model="thing.Document_Complete__c"/></td>
+                                <td>{{thing.Reviewer_Comments__c}}</td>
+                                
+                                </tr>
+                                
+                                </table>
+                                <div class="loadingSection" ng-show="loading" >
+                                    <div class="loadingBackground"></div>
+                                    <div>
+                                        <apex:image url="{!$Resource.loading}" styleClass="loading" />
+                                            </div>
+                                        </div>
+                                        <div class="background" ng-show="loading" >
+                                            </div>
+                                        </div>
+                                        
+                                        <script>
+                                            var app = angular.module('myApp', []);
+        app.controller('myCtrl', function($scope,$q) {
+            $scope.allDigiorecords = [];
+            $scope.firstName = "John";
+            $scope.lastName = "Doe";
+            $scope.loading = false;
+            $scope.getAllDigioRecords = function(){
+                $scope.loading = true;
+                Visualforce.remoting.Manager.invokeAction(
+                    "digioAttachmentUpload.getAllDigioRecords",'asdf',
+                    function(result, event) {
+                        $scope.loading = false;
+                        debugger;
+                        if(result != undefined){
+                            $scope.allDigiorecords = result;
+                            $scope.$apply();
+                        }
+                    },
+                    {escape: false}
+                );
+                
+            }
+            $scope.getAllDigioRecords();
+            $scope.uploadfile = function(item){
+                $scope.loading = true;
+                $scope.$apply();
+                debugger;
+                alert('sss');
+                console.log(item);
+                debugger;
+                console.log('Digio Record id');
+                console.log(item.attributes.digiorecordid.value);
+                console.log('Digio Record id');
+                console.log(item.files[0].toString());
+                
+                
+                var file = item.files[0];
+                console.log(file);
+                if(file != undefined) {
+                    if(file.size <= maxFileSize) {
+                        attachmentName = file.name;
+                        var fileReader = new FileReader();
+                        fileReader.onloadend = function(e) {
+                            attachment = window.btoa(this.result);  //Base 64 encode the file before sending it
+                            positionIndex=0;
+                            fileSize = attachment.length;
+                            console.log("Total Attachment Length: " + fileSize);
+                            doneUploading = false;
+                            if(fileSize < maxStringSize) {
+                                $scope.uploadAttachment(item.attributes.digiorecordid.value,null);
+                            } else {
+                                alert("Base 64 Encoded file is too large.  Maximum size is " + maxStringSize + " your file is " + fileSize + ".");
+                            }
+                            
+                        }
+                        fileReader.onerror = function(e) {
+                            alert("There was an error reading the file.  Please try again.");
+                        }
+                        fileReader.onabort = function(e) {
+                            alert("There was an error reading the file.  Please try again.");
+                        }
+                        
+                        fileReader.readAsBinaryString(file);  //Read the body of the file
+                        
+                    } else {
+                        alert("File must be under 4.3 MB in size.  Your file is too large.  Please try again.");
+                    }
+                } else {
+                    alert("You must choose a file before trying to upload it");
+                }
+            }
+            
+            var maxStringSize = 6000000;    //Maximum String size is 6,000,000 characters
+            var maxFileSize = 4350000;      //After Base64 Encoding, this is the max file size
+            var chunkSize = 950000;         //Maximum Javascript Remoting message size is 1,000,000 characters
+            var attachment;
+            var attachmentName;
+            var fileSize;
+            var positionIndex;
+            var doneUploading;
+            
+            $scope.uploadAttachment = function(item,fileId){
+                var attachmentBody = "";
+                if(fileSize <= positionIndex + chunkSize) {
+                    attachmentBody = attachment.substring(positionIndex);
+                    doneUploading = true;
+                } else {
+                    attachmentBody = attachment.substring(positionIndex, positionIndex + chunkSize);
+                }
+                console.log("Uploading " + attachmentBody.length + " chars of " + fileSize);
+                digioAttachmentUpload.doUploadAttachment(
+                    item, attachmentBody, attachmentName, fileId, 
+                    function(result, event) {
+                        console.log(result);
+                        if(event.type === 'exception') {
+                            console.log("exception");
+                            console.log(event);
+                        } else if(event.status) {
+                            if(result != undefined && result != null) {
+                                if(doneUploading == true) {
+                                    $scope.loading = false;
+                                    alert('attachment successfully uploaded!');
+                                    $scope.$apply();
+                                    debugger;
+                                } else {
+                                    positionIndex += chunkSize;
+                                    $scope.uploadAttachment(item.attributes.digiorecordid.value,result);
+                                }
+                            }
+                        } else {
+                            console.log(event.message);
+                        }
+                    },
+                    {buffer: true, escape: true, timeout: 120000}
+                );
+                
+            }
+            
+           
+        });
+        //
+        
+        </script>
+        
+        
+        
+        
+        
+    </body>
+</html>
+
+</apex:page>

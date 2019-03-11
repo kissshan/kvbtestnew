@@ -1,0 +1,28 @@
+<!-- 
+Name      : File_Upload
+Company   : ET Marlabs
+Purpose   : File_Upload Vf Page to upload attachment from Skuid Page
+Author    : Braj
+ -->
+
+<apex:page controller="File_Upload_Ctrl" showHeader="false">
+    <apex:form enctype="multipart/form-data">
+        <apex:pageMessages />
+        <apex:pageBlock title="Upload an Attachment">
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!upload}" value="Save" rendered="{!$UserRole.Name=='Branch manager'}"/>
+                <apex:commandButton action="{!cancel}" value="Cancel"/>
+            </apex:pageBlockButtons>
+            
+            <apex:pageBlockSection showHeader="false" columns="2" id="block1">
+            
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="File" for="file" rendered="{!$UserRole.Name=='Branch manager'}"/>
+                    <apex:inputFile value="{!attach.body}" filename="{!attach.name}" id="file" contentType="{!attach.ContentType}" rendered="{!$UserRole.Name=='Branch manager'}"/>
+                </apex:pageBlockSectionItem>
+                
+            </apex:pageBlockSection>
+            
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

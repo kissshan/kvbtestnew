@@ -1,0 +1,57 @@
+<apex:page standardController="genesis__Applications__c" extensions="reassignOwner" showHeader="false" standardStylesheets="true">
+    <apex:form >
+        <apex:pageBlock >
+            <apex:pageMessages ></apex:pageMessages>
+            <apex:pageBlockSection rendered="{!s1}" title="Completed Task">
+                <apex:pageBlockTable value="{!childwrapper}" var="lst">
+                    <apex:column id="cl1">
+                        <apex:inputcheckbox value="{!lst.selected}"/>
+                    </apex:column>
+                    <apex:column value="{!lst.taskId}"     headerValue="taskId"/>
+                    <apex:column value="{!lst.taskType}"   headerValue="taskType"/>
+                    <apex:column value="{!lst.taskStatus}" headerValue="taskStatus"/>
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+            <apex:commandButton value="Re-assign Owner" action="{!ReassignOwner}" rendered="{!s1}"/>
+            
+            <apex:pageBlockSection rendered="{!!s1}" title="USER List">
+                <apex:pageBlockTable value="{!lstWrpCls}" var="lst" >
+                    <apex:column id="cl1">
+                        <apex:inputcheckbox value="{!lst.selected}" />
+                    </apex:column>
+                    <apex:column value="{!lst.groupMember}" headerValue="USER ID"/>
+                    <apex:column value="{!lst.memberName}" headerValue="USER ROLE"/>
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+            <apex:commandButton action="{!confirmToAssign}"  value="Confirm To Assign" oncomplete="CloseWindow({!usercount});" rendered="{!!s1}" />
+        </apex:pageBlock>
+    </apex:form>
+    <script>
+    function CloseWindow(count)
+    { 
+        if(count==1){
+            window.top.close();
+            //alert('before location reload');
+            // window.location.href = "https://kvb--sit.cs58.my.salesforce.com/a4V0l0000004vGR?nooverride=1#a4V0l0000004GIj_00N0l0000011rrn_target"
+            //location.reload('https://kvb--sit.cs58.my.salesforce.com/a4V0l0000004vGR?nooverride=1#a4V0l0000004GIj_00N0l0000011rrn_target');
+            //alert('after location reload');
+        }
+        else if(count == 0){
+            alert('Please Select at Least one User');
+        }
+            else{
+                alert('Please Select only one User');
+            }
+    }
+    function checkTaskIsSelected(count)
+    {
+        if(count == 0){
+            alert('Please Select at Least one TASK');
+            //return false;
+        }else{
+            alert('Request Proceed');
+            //return true;
+        }
+    }
+    </script>
+</apex:page>

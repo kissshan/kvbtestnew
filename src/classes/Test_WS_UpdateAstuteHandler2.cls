@@ -1,0 +1,16 @@
+@isTest
+public class Test_WS_UpdateAstuteHandler2 {
+   	@isTest 
+    static void test_WS_UpdateAstuteHandler_case1() {
+
+        string json='{ "applicationData": { "applicationNumber": "a4V7F000000QxL9", "fileNumber": "a4V7F000000QxL9", "applicantName": "KVB", "caseNotificationId": "d847ae18-c56d-ec4c-47ce-d8cd8fc5907a" }, "residenceDetails": { "address": "hjfdugief", "propertyType": "RESIDENCE", "fieldReport": { "dateOfVisit": "26/11/2016", "timeOfVisit": "27/11/2018", "addressConfirmed": "Yes", "prominentLandmark": "erfwer", "locality": "sfdgdr", "accessibility": "sdfer", "residenceType": "adfa", "ownershipStatus": "afdaer", "noOfStoreys": "12.34", "lift": "asdfs", "externalAppearance": "sfd", "construction": "sadf", "areaSqFt": "200", "internalAppearance": "sf", "asset": "1000", "personContacted": "jkndfi", "stayStatus": "defer", "durationOfStay": "3", "timeOfTheDay": "12", "noOfPersonStaying": "3", "relationshipWithApplicant": [], "neighbourFeedback": "", "politicalLink": "jdfu", "residenceVerification": "Negative", "otherDetails": { "comments": "Visited the given area and the given address is unable to trace and we call to applicant and they confirmed that they vacated from the given address and no other details disclosed.", "deDupeStatus": "Match Not Found", "deDupeRemark": "jkrber", "verifierName": "jher" } } } }';
+        
+        string json1='{ "applicationData": { "applicationNumber": "a4V7F000000RJmS", "fileNumber": "a4V7F000000RJmS", "applicantName": "KVB", "caseNotificationId": "fb6a2b1f-f6e8-019d-5a0d-45685a82437f" }, "officeDetails": { "employerInfo": { "name": "SURESH JANARTHANAN", "address": "jrfur", "propertyType":"hgfu", "telephone": "jhjs" }, "fieldReport": { "dateOfVisit": "", "timeOfVisit": "", "addressConfirmed": "", "prominentLandmark": "", "locality": "", "officeType": "", "colleagueInfo": { "name": "dfdf", "designation": "dfs", "directTelephone": "7526076363", "mobileNumber": "7526076363", "visitingCardObtained": "1" }, "businessActivityLevel": "", "noOfSightedEmployees": "", "noOfSightedClients": "", "applicantVerification": { "designation": "jhfei", "department": "hehjw", "grade": "A", "salary": "63932.90", "dateOfJoining": "12/11/2015", "serviceDuration": "12", "PFNumber": "wed123211", "typeOfJob": "et", "natureOfJob": "it", "natureOfBusiness": "bus", "carpetArea": "200", "employerVerification": "Positive" }, "otherDetails": { "comments": "VISITED THE GIVEN ADDRESS MET PERSON JAYAKUMAR SALES MANAGER HE TOLD THAT APP WAS WORKING HAS SENIOR SALES MANAGER PAST 6 YEAR IN THE GIVEN ADDRESS STAFF 100 SEEN AREA HUGE SQ FT APP GETTING INCOME 16000 CONFIRMED FOUND OK", "deDupeStatus": "Match Not Found", "deDupeRemark": "", "verifierName": "" } } } }';
+        
+        Test.startTest();
+	        WS_UpdateAstuteHandler.getAstuteDetails(null);
+	        WS_UpdateAstuteHandler.getAstuteDetails(WS_UpdateAstuteRequest.parse(json));
+	        WS_UpdateAstuteHandler.getAstuteDetails(WS_UpdateAstuteRequest.parse(json1));
+        Test.stopTest();
+    }
+}

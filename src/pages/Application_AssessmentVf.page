@@ -1,0 +1,460 @@
+<!-- Application_AssessmentVf -->
+<apex:page controller="Application_AssessmentCtrl" action="{!calculateFLC_ILCAssessment}" showHeader="false" standardStylesheets="false">
+    <html>
+        <head>
+            <title>Limit Assessment</title>
+            
+            <Style>
+            
+                body{
+                padding: 50px;
+                margin-top: -33px;
+                font-family: calibri;
+                }
+                table {
+                font-family: calibri;
+                border-collapse: collapse;
+                width: 95%;
+                margin: 0 auto;
+                margin-bottom:24px;
+                font-size:12pt;
+                text-align:left;
+                }
+                //table tr:last-child { background:#c6c3bd; }    
+                table tr th:first-child {width: 30% }        
+                
+                td, th {
+                border: 1px solid #ffffff;
+                //text-align: left;
+                padding: 8px;
+                background: #dddddd;
+                }
+                table tr th{
+                text-align:left;
+                font-weight:normal;
+                }
+                .contentDiv {
+                margin-left: 135px; 
+                margin-top: 25px; 
+                margin-bottom: 25px; 
+                margin-right: 135px; 
+                border: 1px dotted black;
+                padding: 10px 10px 10px 10px;
+                }
+                
+                table th {
+                background:rgb(0,176,240);
+                color:rgb(255,255,255);
+                }
+                .subHead{
+                text-align: center;
+                padding: 10px;
+                font-weight: bold;
+                margin: 27px;
+                background: rgb(0,175,240);
+                color: rgb(255,255,255);
+                }
+                
+                .leftDiv{
+                width:32%;
+                float:left;
+                }
+                .floatRight{
+                float:right;
+                margin-right:132px;
+                }
+                .textAlignRight{
+                text-align: right;
+                }
+                .previous {
+                background-color:rgb(0,176,240);
+                color: #fff;
+                text-decoration: none;
+                display: inline-block;
+                padding: 4px 17px;
+                font-size:1em;
+                border-radius:4px;
+                margin-bottom:4px;
+                }
+            </Style>
+            
+        </head>
+        <body>
+            
+            <div class="leftDiv floatRight textAlignRight">
+                
+                
+                <a href="/{!appId}" class="previous">&#8249;  Back
+                    <!-- <img style="height:30px" src="{!$Resource.PreviousBtn}"/>-->
+                </a>
+                
+                
+            </div>
+            
+            <div style="font-size: 18px;text-align: center;padding: 5px;font-weight: bold;margin: 27px;">Application Assessment</div>
+            <div style="padding-left: 135px;margin-top: -25px;margin-bottom: -40px;font-weight: bold">
+                {!applicationName}
+            </div>
+            <br/>       
+            <div style="margin-left: 980px;margin-top: 5px;font-weight: bold">
+                {!accountName}
+            </div>
+            <div class ="contentDiv">
+                <div id ="div0">
+                    <div class="subHead">Limit Assessment (Rs. in Lakhs)</div>
+                    <apex:pageBlock >
+                        <apex:pageblocksection rendered="{!renderNTB}">
+                            <table>
+                                <tr>
+                                    <th>GST sales for FY {!currFYFullYear} (A)</th>
+                                    <td>{!gstsalesforFY}</td>
+                                </tr>
+                                <tr>
+                                    <th> Maximum limit</th>
+                                    <td>50.00</td>
+                                </tr>
+                                <tr>
+                                    <th>MPBF </th>
+                                    <td>{!MPBF}</td>
+                                </tr>
+                            </table>
+                        </apex:pageblocksection>
+                        <apex:pageblocksection rendered="{!renderNTB1}">
+                            <table>
+                                <tr>
+                                    <th>Credit summation during {!fromDate} to {!toDate} (A)</th>
+                                    <td>{!creditSummation}</td>
+                                </tr>
+                                <tr>
+                                    <th> Maximum limit</th>
+                                    <td>50.00</td>
+                                </tr>
+                                <tr>
+                                    <th>MPBF (A* 25%) </th>
+                                    <td>{!MPBF}</td>
+                                </tr>
+                            </table>
+                        </apex:pageblocksection>
+                        <apex:pageblocksection rendered="{!renderNTB2}">
+                            <table value="{!fundedFacilitiesObj}" width="60%" border="0"  cellspacing = "6" cellpadding="5">                
+                                <tr>
+                                    <th >Sales</th>
+                                    <td id="limitSales"></td>
+                                </tr>
+                                <tr>
+                                    <th>Working Capital Requirement(A)</th>
+                                    <td id="limitReqA"></td>
+                                </tr>
+                                <tr>
+                                    <th>Borrower's Contribution(B)</th>
+                                    <td id="limitContB"></td>
+                                </tr>
+                                <tr>
+                                    <th>Net Working Capital(C)</th>
+                                    <td id="limitCapC"></td>
+                                </tr>
+                                <tr>
+                                    <th>Item(A-B)</th>
+                                    <td id="limitAB"></td>
+                                </tr>
+                                <tr>
+                                    <th>Item(A-C)</th>
+                                    <td id="limitAC"></td>
+                                </tr>
+                                <tr>
+                                    <th> Maximum limit</th>
+                                    <td>50.00</td>
+                                </tr>
+                                <tr>
+                                    <th>MPBF</th>
+                                    <td >{!MPBF}</td>
+                                </tr>
+                            </table>
+                        </apex:pageblocksection>
+                    </apex:pageBlock>
+                    <apex:pageblock rendered="{!renderIfTypeNotNTC}">
+                        <apex:pageblocksection rendered="{!renderLess}">
+                            <table>
+                                <tr>
+                                    <th>Credit summation during {!fromDate} to {!toDate} (A) </th>
+                                    <td>{!creditSummation}</td>
+                                </tr>
+                                <tr>
+                                    <th>3 times average monthly credit summation (B)</th>
+                                    <td>{!averageMonthlyCreditSummation}</td>
+                                </tr>
+                                <tr>
+                                    <th>MPBF</th>
+                                    <td>{!MPBF}</td>
+                                </tr>
+                            </table>
+                        </apex:pageblocksection>
+                        <apex:pageblocksection rendered="{!renderLess1}">
+                            <table>
+                                <tr>
+                                    <th>  GST sales for FY {!nextEstFYFullYear} - Last {!mentionMonth} Month (A)  </th>
+                                    <td>{!gstsalesforFY}</td>
+                                </tr>
+                                <tr>
+                                    <th> Annualized GST sales for 12 Months (B)</th>
+                                    <td>{!AnnualizedGSTsales}</td>
+                                </tr>
+                                <tr>
+                                    <th>MPBF</th>
+                                    <td>{!MPBF}</td>
+                                </tr>
+                            </table>
+                        </apex:pageblocksection>
+                        <apex:pageblocksection rendered="{!renderLess2}">
+                            <table>
+                                <tr>
+                                    <th>GST sales for FY {!currFYFullYear} - Last {!mentionMonth} Month (A)</th>
+                                    <td>{!gstsalesforFY}</td>
+                                </tr>
+                                
+                                <tr>
+                                    <th>MPBF</th>
+                                    <td>{!MPBF}</td>
+                                </tr>
+                            </table>
+                        </apex:pageblocksection>
+                        <apex:pageblocksection rendered="{!rendergreater}">
+                            <table>
+                                <tr>
+                                    <th>Credit summation during {!fromDate} to {!toDate} (A)</th>
+                                    <td>{!creditSummation}</td>
+                                </tr>
+                                <tr>
+                                    <th>Eligible Limit 1 (B)</th>
+                                    <td>{!Eligiblelimit1}</td>
+                                </tr>
+                                <tr>
+                                    <th>MPBF</th>
+                                    <td>{!MPBF}</td>
+                                </tr>
+                            </table>
+                        </apex:pageblocksection>
+                        <apex:pageblocksection rendered="{!rendergreater1}">
+                            <table>
+                                <tr>
+                                    <th>GST sales for FY {!nextEstFYFullYear}- Last {!mentionMonth} Month (A) </th>
+                                    <td>{!gstsalesforFY}</td>
+                                </tr>
+                                <tr>
+                                    <th>Annualized GST sales for 12 Months (B)</th>
+                                    <td>{!AnnualizedGSTsales}</td>
+                                </tr>
+                                <tr>
+                                    <th>MPBF</th>
+                                    <td>{!MPBF}</td>
+                                </tr>
+                            </table>
+                        </apex:pageblocksection>
+                        <apex:pageblocksection rendered="{!rendergreater2}">
+                            <table>
+                                <tr>
+                                    <th> GST sales for FY {!currFYFullYear}- Last {!mentionMonth} Month (A)</th>
+                                    <td>{!gstsalesforFY}</td>
+                                </tr>
+                                <tr>
+                                    <th>Eligible limit 1</th>
+                                    <td>{!Eligiblelimit1}</td>
+                                </tr>
+                                <tr>
+                                    <th>MPBF</th>
+                                    <td>{!MPBF}</td>
+                                </tr>
+                            </table>
+                        </apex:pageblocksection>
+                    </apex:pageblock>
+                    <apex:pageBlock rendered="{!!renderIfTypeNotNTC && !renderIfTypeNotNTB}">
+                        
+                        <table value="{!fundedFacilitiesObj}" width="60%" border="0"  cellspacing = "6" cellpadding="5">                
+                            <tr>
+                                <th >Sales</th>
+                                <td id="limitSales"></td>
+                            </tr>
+                            <tr>
+                                <th>Working Capital Requirement(A)</th>
+                                <td id="limitReqA"></td>
+                            </tr>
+                            <tr>
+                                <th>Borrower's Contribution(B)</th>
+                                <td id="limitContB"></td>
+                            </tr>
+                            <tr>
+                                <th>Net Working Capital(C)</th>
+                                <td id="limitCapC"></td>
+                            </tr>
+                            <tr>
+                                <th>Item(A-B)</th>
+                                <td id="limitAB"></td>
+                            </tr>
+                            <tr>
+                                <th>Item(A-C)</th>
+                                <td id="limitAC"></td>
+                            </tr>
+                            <tr>
+                                <th>MPBF</th>
+                                <td id="limitMPBF"></td>
+                            </tr>
+                        </table>
+                        
+                        <div id="div4"  >
+                            <apex:outputPanel rendered="{!CashBudget}"> 
+                                <div class="subHead"  >Cash Budget Method</div>    
+                                <table  border="0" width="73%" cellspacing = "6" cellpadding="5">               
+                                    <tr>
+                                        <td>Peak Deficit value  {!limitAssessment_Drawing} for the month {!limit_final_month}  {!limit_final_year}</td>
+                                        <td id="bgExisting"></td>
+                                    </tr>
+                                    
+                                </table>
+                            </apex:outputPanel> 
+                            
+                        </div>
+                        
+                        <div id ="div1">
+                            <div class="subHead">FLC/ILC Assessment(in Lakhs)</div>  
+                            <table value="{!fundedFacilitiesObj}" border="0" width="62%" cellspacing = "6" cellpadding="5">             
+                                <tr>
+                                    <th>Estimated Net Sale</th>
+                                    <td id="flcEstSales"></td>
+                                </tr>
+                                <tr>
+                                    <th>Estimated Total Purchases</th>
+                                    <td id="flcEstTotal"></td>
+                                </tr>
+                                <tr>
+                                    <th>Purchases</th>
+                                    <td id="flcPurchase"></td>
+                                </tr>
+                                <tr>
+                                    <th>Total No.of Days</th>
+                                    <td id="flcDays"></td>
+                                </tr>
+                                <tr>
+                                    <th>Requirement</th>
+                                    <td id="flcReq"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <div id="div2">
+                            <div class="subHead">BG Assessment(in Lakhs)</div>   
+                            <table value="{!fundedFacilitiesObj}" border="0" width="73%" cellspacing = "6" cellpadding="5">             
+                                <tr>
+                                    <th>Existing BG Limits</th>
+                                    <td id="bgExisting"></td>
+                                </tr>
+                                <tr>
+                                    <th>BG Limit</th>
+                                    <td id="bgLimit"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <div id="div3">
+                            <div class="subHead">CEL Assessment(in Lakhs)</div>  
+                            <table value="{!fundedFacilitiesObj}" border="0" width="75%" cellspacing = "6" cellpadding="5">             
+                                <tr>
+                                    <th>Total Limits</th>
+                                    <td id="celLimit"></td>
+                                </tr>
+                                <tr>
+                                    <th>CEL Requirement</th>
+                                    <td id="celReq"></td>
+                                </tr>
+                                
+                            </table>
+                            
+                        </div>
+
+                        <!-- Facilitywise PMAX1-->
+
+
+
+                    </apex:pageBlock>
+                    <div id="div4">
+                        <div class="subHead">Facilitywise PMAX1</div>
+
+                        <table border="0" width="75%" cellspacing = "6" cellpadding="5">
+                            <tr>
+                                <th style="text-align: center;">Facility Name</th>
+                                <th style="text-align: center;">PMAX1</th>
+                                <!--<th style="text-align: center;">Emi Required</th>-->
+                            </tr>
+
+                            <apex:repeat var="wrapObj" value="{!facWisePMAX1WrapList}">
+
+                                <tr>
+                                    <td style="text-align: center;">{!wrapObj.FacName}</td>
+                                    <td style="text-align: center;">{!wrapObj.pmax1}</td>
+                                   <!-- <td style="text-align: center;">{!wrapObj.emiRequired}</td>-->
+                                </tr>
+
+                            </apex:repeat>
+
+                        </table>
+
+                    </div>
+                    
+                </div> 
+            </div>
+            
+            <script type="text/javascript">
+            function checkNaNRetInLakhs(val){
+                if(isNaN(val) || val === undefined){
+                    return 0.00;
+                }
+                
+                else
+                    return (val/100000).toFixed(2);
+            }
+            function lowestAmongThreeValue(val,val1) {
+                /*var minval = Math.min(val,val1,5000000);
+                minval = (minval/100000).toFixed(2); 
+                return minval;*/
+                return (Math.min(val,val1,5000000)/100000).toFixed(2);
+            }
+            document.getElementById("limitSales").innerHTML = checkNaNRetInLakhs({!fundedFacilitiesObj.sale});
+            document.getElementById("limitReqA").innerHTML = checkNaNRetInLakhs({!fundedFacilitiesObj.working_Requirement});
+            document.getElementById("limitContB").innerHTML = checkNaNRetInLakhs({!fundedFacilitiesObj.borrowers_contribution});
+            document.getElementById("limitCapC").innerHTML = checkNaNRetInLakhs({!fundedFacilitiesObj.NWCperpreviousyear});
+            document.getElementById("limitAB").innerHTML = checkNaNRetInLakhs({!fundedFacilitiesObj.item});
+            document.getElementById("limitAC").innerHTML = checkNaNRetInLakhs({!fundedFacilitiesObj.item2});
+            document.getElementById("limitMPBF").innerHTML = checkNaNRetInLakhs({!fundedFacilitiesObj.smalleritem});
+            document.getElementById("flcEstSales").innerHTML = checkNaNRetInLakhs({!fundedFacilitiesObj.estimated_sale});
+            document.getElementById("flcEstTotal").innerHTML = checkNaNRetInLakhs({!fundedFacilitiesObj.estimatedTotalPurchases});
+            document.getElementById("flcPurchase").innerHTML = checkNaNRetInLakhs({!fundedFacilitiesObj.localPurchases});
+            document.getElementById("flcDays").innerHTML = checkNaNRetInLakhs({!fundedFacilitiesObj.totalNoofdays});
+            document.getElementById("flcReq").innerHTML = checkNaNRetInLakhs({!fundedFacilitiesObj.requirementILC});
+            document.getElementById("bgExisting").innerHTML = checkNaNRetInLakhs({!fundedFacilitiesObj.existingBGlimit});
+            document.getElementById("bgLimit").innerHTML = checkNaNRetInLakhs({!fundedFacilitiesObj.bglimit});
+            document.getElementById("celLimit").innerHTML = checkNaNRetInLakhs({!fundedFacilitiesObj.totalLimitSum});
+            document.getElementById("celReq").innerHTML = checkNaNRetInLakhs({!fundedFacilitiesObj.cELRequirement}); 
+            document.getElementById("limitMPBF1").innerHTML = lowestAmongThreeValue({!fundedFacilitiesObj.item},{!fundedFacilitiesObj.item2});
+            if({!CONTAINS(fundedFacilitiesObj.facilityCategory,'FLC') || CONTAINS(fundedFacilitiesObj.facilityCategory,'ILC' )}){
+                document.getElementById('div1').style.display = 'block'; 
+            }
+            else{
+                document.getElementById('div1').style.display = 'none';
+            }
+            if({!CONTAINS(fundedFacilitiesObj.facilityCategory,'BG')}){
+                document.getElementById('div2').style.display = 'block';
+            }
+            else{
+                document.getElementById('div2').style.display = 'none';
+            }
+            if({!CONTAINS(fundedFacilitiesObj.facilityCategory,'FLC') || CONTAINS(fundedFacilitiesObj.facilityCategory,'PCFC') || CONTAINS(fundedFacilitiesObj.facilityCategory,'FBN') || CONTAINS(fundedFacilitiesObj.facilityCategory,'FBP') || CONTAINS(fundedFacilitiesObj.facilityCategory,'EBD')}){
+                document.getElementById('div3').style.display = 'block';
+            }
+            else{
+                document.getElementById('div3').style.display = 'none';
+            }
+            
+            </script>
+        </body>
+        
+    </html>
+</apex:page>

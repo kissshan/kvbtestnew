@@ -1,0 +1,946 @@
+<apex:page sidebar="false" showHeader="false" standardStylesheets="false" controller="M68C_Controller" action="{!onLoad}">
+    <html>
+        <title>M68C</title>
+        <head>
+            <style>
+                table {
+                font-family: calibri;
+                border-collapse: collapse;
+                width: 95%;
+                margin: 0 2%;
+                margin-bottom:24px;
+                font-size:12pt;
+                text-align:right;
+                float:left;
+                }
+                table tr:last-child { background:#c6c3bd; }    
+                table tr th:first-child {width: 17% }        
+                
+                td, th {
+                border: 1px solid #dddddd;
+                text-align: left;
+                padding: 8px;
+                }
+                table tr th{
+                text-align:right;
+                font-weight:normal;
+                }
+                
+                 .leftDiv{
+                position: fixed;
+                width: 95%;
+                margin: 0 2%;
+                background: #fff;
+                z-index: 111;
+                top: 0;
+                padding: 8px 0;
+                float:left;
+                }
+                .floatRight{
+                float:right;
+                }
+                .textAlignRight{
+                text-align: right;
+                }
+                .previous {
+                background-color:rgb(0,176,240);
+                color: #fff;
+                text-decoration: none;
+                display: inline-block;
+                padding: 4px 17px;
+                font-size:1em;
+                border-radius:4px;
+                margin-bottom:4px;
+                }
+            </style>
+            <script>
+           
+            </script>
+        </head>
+        <body>
+        
+            <div style="width: 95%;
+                        margin: 0 2%;
+                        float: left;
+                        position: fixed;
+                        background: #fff;
+                        z-index: 111;
+                        top:0">
+                   
+                
+                <h3 style='text-align:center;float: left;
+    margin: 10px;
+    width: 90%;'>
+                    Financial Analysis- M68C  
+                </h3>
+                <a style="
+                          float: right;
+                          margin: 10px;
+                          width: 4%;
+                          " href="/{!appId}" class="previous">&#8249;  Back
+                </a>
+                
+                <h4 style='float:left;width:100%;margin:5px'>
+                    Company Name: <span id="custName" style='font-weight:normal'>M/sXXXXX</span>
+                </h4>
+               
+                <h4 style='float:left;width:100%;margin:5px'>
+                    Branch Code: <span id="branchCode" style='font-weight:normal'> YYYY</span>
+                </h4> 
+                 <h4 style='float:left;width:100%;margin:5px;text-align:right'>
+                    (Rs. in Lacs)
+                </h4>                 
+            </div>  
+            
+            <table style='width: 94%;
+                          margin: 0 2%;
+                          margin-top: 122px;
+                          float: left;
+                          position: fixed;'>
+                    <tr style='background:rgb(0,176,240);color:rgb(255,255,255);text-align:center'>
+                        <th style="width:18%;text-align:center">LIABILITIES</th>
+                        <th style="width:8%;text-align:center" id="PFY"></th>
+                        <th style="width:8%;text-align:center" id="CFY"></th>  
+                        <th style="width:8%;text-align:center" id="EFY"></th>
+                        <th style="width:8%;text-align:center" id="PRFY"></th>
+                        <th style="width:18%;text-align:center">ASSETS</th>
+                        <th style="width:8%;text-align:center" id="PFY1"></th>
+                        <th style="width:8%;text-align:center" id="CFY1"></th>
+                        <th style="width:8%;text-align:center" id="EFY1"></th>
+                        <th style="width:8%;text-align:center" id="PRFY1"></th>
+                </tr>
+                <tr style='background:rgb(0,176,240);color:rgb(255,255,255);text-align:center'>
+                    <th></th>
+                    <th style="width:8%;text-align:center">Audited</th>
+                    <th style="width:8%;text-align:center">Audited</th>
+                    <th style="width:8%;text-align:center">Estimated</th>
+                    <th style="width:8%;text-align:center">Projected</th>   
+                    <!--<th>Audited</th>
+<th>Audited</th>-->
+                    <th></th>
+                    <th style="width:8%;text-align:center">Audited</th>
+                    <th style="width:8%;text-align:center">Audited</th>    
+                    <th style="width:8%;text-align:center">Estimated</th>
+                    <th style="width:8%;text-align:center">Projected</th>
+                </tr>
+                </table>
+             
+                 <table style="width: 95%;
+                          margin: 0 2.1%;
+                          margin-top: 194px;;
+                          float: left;">
+                <tr>
+                    <th style="text-align:left;font-weight: 900;width:18%;" colspan="1">Current Liabilities:</th>
+                    <th style="width:8%;"></th>
+                    <th style="width:8%;"></th>
+                    <th style="width:8%;"></th>
+                    <th style="width:8%;"></th>    
+                    <th style="text-align:left;font-weight: 900;width:18%;" colspan="1">Current Assets:</th>
+                    <th style="width:8%;"></th>
+                    <th style="width:8%;"></th>
+                    <th style="width:8%;"></th>
+                    <th style="width:8%;"></th>    
+                </tr>
+                <tr>
+                    <th colspan="1" style='text-align:left;'>Bank Borrowings</th>
+                    <th id="bankBorr_PFY"></th>
+                    <th id="bankBorr_CFY"></th>
+                    <th id="bankBorr_EFY"></th>
+                    <th id="bankBorr_PRFY"></th>    
+                    <th style='text-align:left;'>Cash and Bank Balance</th>
+                    <th id="cbBalance_PFY"></th>
+                    <th id="cbBalance_CFY"></th>
+                    <th id="cbBalance_EFY"></th>
+                    <th id="cbBalance_PRFY"></th>    
+                    
+                </tr>
+                <tr>
+                    <th colspan="1" style='text-align:left;'>Sundry Creditors</th>
+                    <th id="sCred_PFY"></th>
+                    <th id="sCred_CFY"></th>
+                    <th id="sCred_EFY"></th>
+                    <th id="sCred_PRFY"></th>    
+                    <th style='text-align:left;'>Inventories</th>
+                    <th id="inventories_PFY"></th>
+                    <th id="inventories_CFY"></th>
+                    <th id="inventories_EFY"></th>
+                    <th id="inventories_PRFY"></th>    
+                    
+                </tr>
+                <tr>
+                    <th colspan="1" style='text-align:left;'>Sundry Creditors -Finance</th>
+                    <th id="sCredFin_PFY"></th>
+                    <th id="sCredFin_CFY"></th>
+                    <th id="sCredFin_EFY"></th>
+                    <th id="sCredFin_PRFY"></th> 
+                    <th style='text-align:left;'>Sundry Debtors</th>
+                    <th id="snDebt_PFY"></th>
+                    <th id="snDebt_CFY"></th>
+                    <th id="snDebt_EFY"></th>
+                    <th id="snDebt_PRFY"></th> 
+                    
+                </tr>
+                <tr>
+                    <th colspan="1" style='text-align:left;'>Sundry Creditors -Expense</th>
+                    <th id="snCredExp_PFY"></th>
+                    <th id="snCredExp_CFY"></th>
+                    <th id="snCredExp_EFY"></th>
+                    <th id="snCredExp_PRFY"></th>    
+                    <th style='text-align:left;'>Advances and Deposits</th>
+                    <th id="advDep_PFY"></th>
+                    <th id="advDep_CFY"></th>
+                    <th id="advDep_EFY"></th>
+                    <th id="advDep_PRFY"></th>      
+                </tr>
+                
+                <tr>
+                    <th colspan="1" style='text-align:left;'>Provisions</th>
+                    <th id="prov_PFY"></th>
+                    <th id="prov_CFY"></th>
+                    <th id="prov_EFY"></th>
+                    <th id="prov_PRFY"></th>    
+                    <th style='text-align:left;'>Advance to Suppliers</th>
+                    <th id="advSup_PFY"></th>
+                    <th id="advSup_CFY"></th>
+                    <th id="advSup_EFY"></th>
+                    <th id="advSup_PRFY"></th>    
+                    
+                </tr>
+                <tr>
+                    <th colspan="1" style='text-align:left;'>Term Loan &lt; 1 Year</th>
+                    <th id="termLoan_PFY"></th>
+                    <th id="termLoan_CFY"></th>
+                    <th id="termLoan_EFY"></th>
+                    <th id="termLoan_PRFY"></th>    
+                    <th style='text-align:left;'>Bank Deposits </th>
+                    <th id="bankDep_PFY"></th>
+                    <th id="bankDep_CFY"></th>
+                    <th id="bankDep_EFY"></th>
+                    <th id="bankDep_PRFY"></th>
+                </tr>
+                <tr>
+                    <th style='text-align:left;'>Other Current Liabilities</th>
+                    <th id="otherCurrLib_PFY"></th>
+                    <th id="otherCurrLib_CFY"></th>
+                    <th id="otherCurrLib_EFY"></th>
+                    <th id="otherCurrLib_PRFY"></th>    
+                    <th style='text-align:left;'>Other Current Assets</th>
+                    <th id="otherCurrAss_PFY"></th>
+                    <th id="otherCurrAss_CFY"></th>
+                    <th id="otherCurrAss_EFY"></th>
+                    <th id="otherCurrAss_PRFY"></th>
+                </tr>
+                <tr>
+                    <th colspan="1" style='text-align:left;'>Other Current Liabilities 1</th>
+                    <th id="clOther1_PFY"></th>
+                    <th id="clOther1_CFY"></th>
+                    <th id="clOther1_EFY"></th>
+                    <th id="clOther1_PRFY"></th>    
+                    <th style='text-align:left;'>Other Current Assets 1</th>
+                    <th id="oca1_PFY"></th>
+                    <th id="oca1_CFY"></th>
+                    <th id="oca1_EFY"></th>
+                    <th id="oca1_PRFY"></th>
+                </tr>
+                <tr>
+                    <th style='text-align:left;' colspan="1">Other Current Liabilities 2</th>
+                    <th id="clOther2_PFY"></th>
+                    <th id="clOther2_CFY"></th>
+                    <th id="clOther2_EFY"></th>
+                    <th id="clOther2_PRFY"></th>   
+                    <th style='text-align:left;'>Other Current Assets 2</th>
+                    <th id="oca2_PFY"></th>
+                    <th id="oca2_CFY"></th>
+                    <th id="oca2_EFY"></th>
+                    <th id="oca2_PRFY"></th>
+                </tr>
+                
+                <tr style='background:rgb(197,217,241)'>
+                    <th colspan="1" style='text-align:left;font-weight: 900'>Total Current Liabilities</th>
+                    <th id="totalCurrLib_PFY">0.0</th>
+                    <th id="totalCurrLib_CFY">0.0</th>
+                    <th id="totalCurrLib_EFY">0.0</th>
+                    <th id="totalCurrLib_PRFY">0.0</th>    
+                    <th style='text-align:left;font-weight: 900'>Total Current Assets</th>
+                    <th id="totalCurrAss_PFY">0.0</th>
+                    <th id="totalCurrAss_CFY">0.0</th>
+                    <th id="totalCurrAss_EFY">0.0</th>
+                    <th id="totalCurrAss_PRFY">0.0</th>  
+                </tr>
+            </table>
+            
+            <table>
+                <tr>
+                    <th style="width:18%;text-align:left;font-weight: 900" >Term Liabilities :</th>
+                    <th style="width:8%"></th>
+                    <th style="width:8%"></th>
+                    <th style="width:8%"></th>
+                    <th style="width:8%"></th>    
+                    <th style="width:18%;text-align:left;font-weight: 900" >Fixed Assets :</th>
+                    <th style="width:8%"></th>
+                    <th style="width:8%"></th>
+                    <th style="width:8%"></th>
+                    <th style="width:8%"></th>    
+                    
+                </tr>
+                <tr>
+                    <th style='text-align:left;'>Term Loan- Banks and Financial Institutions</th>
+                    <th id="termLoanBankFI_PFY"></th>
+                    <th id="termLoanBankFI_CFY"></th>
+                    <th id="termLoanBankFI_EFY"></th>
+                    <th id="termLoanBankFI_PRFY"></th>    
+                    <th style='text-align:left;'>Land and Building</th>
+                    <th id="landBuild_PFY"></th>
+                    <th id="landBuild_CFY"></th>
+                    <th id="landBuild_EFY"></th>
+                    <th id="landBuild_PRFY"></th>    
+                    
+                </tr>
+                <tr>
+                    <th style='text-align:left;'>Unsecured Loans- Friends and Relatives</th>
+                    <th id="unLoan_PFY"></th>
+                    <th id="unLoan_CFY"></th>
+                    <th id="unLoan_EFY"></th>
+                    <th id="unLoan_PRFY"></th>    
+                    <th style='text-align:left;'>Plant and Machinery</th>
+                    <th id="plMach_PFY"></th>
+                    <th id="plMach_CFY"></th>
+                    <th id="plMach_EFY"></th>
+                    <th id="plMach_PRFY"></th>    
+                    
+                </tr>
+                <tr>
+                    <th style='text-align:left;'>Term Loan-NBFCs</th>
+                    <th id="tlNBFC_PFY"></th>
+                    <th id="tlNBFC_CFY"></th>
+                    <th id="tlNBFC_EFY"></th>
+                    <th id="tlNBFC_PRFY"></th> 
+                    <th style='text-align:left;'>Other Fixed Assets</th>
+                    <th id="others_PFY"></th>
+                    <th id="others_CFY"></th>
+                    <th id="others_EFY"></th>
+                    <th id="others_PRFY"></th> 
+                    
+                </tr>
+                <tr>
+                    <th style='text-align:left;'>Other Term Liabilities</th>
+                    <th id="otherTL_PFY"></th>
+                    <th id="otherTL_CFY"></th>
+                    <th id="otherTL_EFY"></th>
+                    <th id="otherTL_PRFY"></th>    
+                    <th style='text-align:left;'>Capital Work in Progress</th>
+                    <th id="capWIP_PFY"></th>
+                    <th id="capWIP_CFY"></th>
+                    <th id="capWIP_EFY"></th>
+                    <th id="capWIP_PRFY"></th>      
+                </tr>
+                
+                <tr>
+                    <th style='text-align:left;'>Other Term Liabilities 1</th>
+                    <th id="tlOther1_PFY"></th>
+                    <th id="tlOther1_CFY"></th>
+                    <th id="tlOther1_EFY"></th>
+                    <th id="tlOther1_PRFY"></th>    
+                    <th> </th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <th style='text-align:left;'>Other Term Liabilities 2</th>
+                    <th id="tlOther2_PFY"></th>
+                    <th id="tlOther2_CFY"></th>
+                    <th id="tlOther2_EFY"></th>
+                    <th id="tlOther2_PRFY"></th>    
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                <tr style='background:rgb(197,217,241)'>
+                    <th style='text-align:left;font-weight: 900'>Total Term Liabilities</th>
+                    <th id="totaltermLib_PFY">0.0</th>
+                    <th id="totaltermLib_CFY">0.0</th>
+                    <th id="totaltermLib_EFY">0.0</th>
+                    <th id="totaltermLib_PRFY">0.0</th>    
+                    <th style='text-align:left;font-weight: 900'>Total Fixed Assets</th>
+                    <th id="totalFixedAss_PFY">0.0</th>
+                    <th id="totalFixedAss_CFY">0.0</th>
+                    <th id="totalFixedAss_EFY">0.0</th>
+                    <th id="totalFixedAss_PRFY">0.0</th>    
+                    
+                </tr>
+                <tr style='background:rgb(197,217,241)'>
+                    <th style='text-align:left;font-weight: 900'>Total Outside Liabilities (TOL)</th>
+                    <th  id="totalOutLiab_PFY">0.0</th>
+                    <th  id="totalOutLiab_CFY">0.0</th>
+                    <th  id="totalOutLiab_EFY">0.0</th>
+                    <th  id="totalOutLiab_PRFY">0.0</th>    
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>    
+                    
+                </tr>
+                
+                
+                
+                <tr>
+                    <th style="width:18%;text-align:left;font-weight: 900">Net Worth:</th>
+                    <th style="width:8%"></th>
+                    <th style="width:8%"></th>
+                    <th style="width:8%"></th>
+                    <th style="width:8%"></th>  
+                    <th style='text-align:left;font-weight: 900'>Non-Current Assets:</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>              
+                    
+                </tr>
+                <tr>
+                    <th style='text-align:left;'>Paid Up Capital</th>
+                    <th id="puCap_PFY"></th>
+                    <th id="puCap_CFY"></th>
+                    <th id="puCap_EFY"></th>
+                    <th id="puCap_PRFY"></th>   
+                    <th style="width:18%;text-align:left;">Investment in Sister concerns and Associates</th>
+                    <th style="width:8%" id="invSisAss_PFY"></th>
+                    <th style="width:8%" id="invSisAss_CFY"></th>
+                    <th style="width:8%" id="invSisAss_EFY"></th>
+                    <th style="width:8%" id="invSisAss_PRFY"></th>    
+                </tr>
+                <tr>
+                    <th style='text-align:left;'>Share Application Money</th>
+                    <th id="shAppMoney_PFY"></th>
+                    <th id="shAppMoney_CFY"></th>
+                    <th id="shAppMoney_EFY"></th>
+                    <th id="shAppMoney_PRFY"></th> 
+                    <th style='text-align:left;'>Investment in Shares, etc.</th>
+                    <th id="invShETC_PFY"></th>
+                    <th id="invShETC_CFY"></th>
+                    <th id="invShETC_EFY"></th>
+                    <th id="invShETC_PRFY"></th>    
+                    
+                    
+                </tr>
+                <tr>
+                    <th style='text-align:left;'>Share Premium</th>
+                    <th id="shPre_PFY"></th>
+                    <th id="shPre_CFY"></th>
+                    <th id="shPre_EFY"></th>
+                    <th id="shPre_PRFY"></th> 
+                    <th style='text-align:left;'>Non Current -Others</th>
+                    <th id="nonCurrOth_PFY"></th>
+                    <th id="nonCurrOth_CFY">0</th>
+                    <th id="nonCurrOth_EFY"></th>
+                    <th id="nonCurrOth_PRFY"></th> 
+                    
+                </tr>
+                <tr>
+                    <th style='text-align:left;'>General Reserves</th>
+                    <th id="genRes_PFY"></th>
+                    <th id="genRes_CFY"></th>
+                    <th id="genRes_EFY"></th>
+                    <th id="genRes_PRFY"></th>    
+                    <th style='text-align:left;font-weight: 900'>Total Non-Current Assets</th>
+                    <th  id="totalNCAss_PFY">0.00</th>
+                    <th  id="totalNCAss_CFY">0.00</th>
+                    <th  id="totalNCAss_EFY">0.00</th>
+                    <th id="totalNCAss_PRFY">0.00</th>      
+                </tr>
+                
+                <tr>
+                    <th style='text-align:left;'>Other Reserves</th>
+                    <th id="othResd_PFY"></th>
+                    <th id="othResd_CFY"></th>
+                    <th id="othResd_EFY"></th>
+                    <th id="othResd_PRFY"></th>    
+                    <th style='text-align:left;font-weight: 900'>Intangible Assets :</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>    
+                    
+                </tr>
+                <tr>
+                    <th style='text-align:left;'>Revaluation Reserves</th>
+                    <th id="revRes_PFY"></th>
+                    <th id="revRes_CFY"></th>
+                    <th id="revRes_EFY"></th>
+                    <th id="revRes_PRFY"></th>    
+                    <th style='text-align:left;'>Profit &amp; Loss Account </th>
+                    <th id="plAcc_PFY"></th>
+                    <th id="plAcc_CFY"></th>
+                    <th id="plAcc_EFY"></th>
+                    <th id="plAcc_PRFY"></th>
+                </tr>
+                <tr>
+                    <th style='text-align:left;'>Surplus in P &amp; L</th>
+                    <th id="surPL_PFY"></th>
+                    <th id="surPL_CFY"></th>
+                    <th id="surPL_EFY"></th>
+                    <th id="surPL_PRFY"></th>    
+                    <th style='text-align:left;'>Misc. Expenditure</th>
+                    <th id="miscExp_PFY"></th>
+                    <th id="miscExp_CFY"></th>
+                    <th id="miscExp_EFY"></th>
+                    <th id="miscExp_PRFY"></th>
+                </tr>
+                <tr>
+                    <th style='text-align:left;'>Other Net Worth 1</th>
+                    <th id="onw1_PFY"></th>
+                    <th id="onw1_CFY"></th>
+                    <th id="onw1_EFY"></th>
+                    <th id="onw1_PRFY"></th>    
+                    <th style='text-align:left;'>Other Intangible Assets</th>
+                    <th id="oiAst_PFY"></th>
+                    <th id="oiAst_CFY"></th>
+                    <th id="oiAst_EFY"></th>
+                    <th id="oiAst_PRFY"></th>
+                </tr>
+                <tr style='background:rgb(197,217,241)'>
+                    <th style='text-align:left;font-weight: 900'>Total Net Worth</th>
+                    <th id="totalNW_PFY">0.0</th>
+                    <th id="totalNW_CFY">0.0</th>
+                    <th id="totalNW_EFY">0.0</th>
+                    <th id="totalNW_PRFY">0.0</th>    
+                    <th style='text-align:left;font-weight: 900'>Total Intangible Assets</th>
+                    <th id="totalIntAss_PFY">0.0</th>
+                    <th id="totalIntAss_CFY">0.0</th>
+                    <th id="totalIntAss_EFY">0.0</th>
+                    <th id="totalIntAss_PRFY">0.0</th>    
+                    
+                </tr>
+                <tr style='background:rgb(197,217,241)'>
+                    <th  style='text-align:left;font-weight: 900'>Total  Liabilities</th>
+                    <th  id="totalLib_PFY">0.0</th>
+                    <th  id="totalLib_CFY">0.0</th>
+                    <th  id="totalLib_EFY">0.0</th>
+                    <th  id="totalLib_PRFY">0.0</th>    
+                    <th style='text-align:left;font-weight: 900'>Total Assets</th>
+                    <th id="totalAss_PFY">0.00</th>
+                    <th id="totalAss_CFY">0.00</th>
+                    <th id="totalAss_EFY">0.00</th>
+                    <th id="totalAss_PRFY">0.00</th>    
+                    
+                </tr>
+                
+                
+            </table>  
+            <table style='background:rgb(197,217,241)'>
+                <tr>
+                    <th style="width:18%;text-align:left;">TOL/TNW Ratio</th>
+                    <th style="width:8%" id="ttRation_PFY"></th>
+                    <th style="width:8%" id="ttRation_CFY"></th>
+                    <th style="width:8%" id="ttRation_EFY"></th>
+                    <th style="width:8%" id="ttRation_PRFY"></th>    
+                    <th style="width:18%;text-align:left;">Gross Sales</th>
+                    <th style="width:8%" id="grSales_PFY"></th>
+                    <th style="width:8%" id="grSales_CFY"></th>
+                    <th style="width:8%" id="grSales_EFY"></th>
+                    <th style="width:8%" id="grSales_PRFY"></th>    
+                    
+                </tr>
+                <tr>
+                    <th style='text-align:left;'>TOL/TNW Ratio(QE)</th>
+                    <th id="ttRationQE_PFY"></th>
+                    <th id="ttRationQE_CFY"></th>
+                    <th id="ttRationQE_EFY"></th>
+                    <th id="ttRationQE_PRFY"></th>    
+                    <th style='text-align:left;'>Net Sales</th>
+                    <th id="netSales_PFY"></th>
+                    <th id="netSales_CFY"></th>
+                    <th id="netSales_EFY"></th>
+                    <th id="netSales_PRFY"></th>    
+                    
+                </tr>
+                <tr>
+                    <th style='text-align:left;'>Current Ratio</th>
+                    <th id="currRatio_PFY"></th>
+                    <th id="currRatio_CFY"></th>
+                    <th id="currRatio_EFY"></th>
+                    <th id="currRatio_PRFY"></th>    
+                    <th style='text-align:left;'>Other Income</th>
+                    <th id="otherIncome_PFY"></th>
+                    <th id="otherIncome_CFY"></th>
+                    <th id="otherIncome_EFY"></th>
+                    <th id="otherIncome_PRFY"></th>    
+                    
+                </tr>
+                <tr>
+                    <th style='text-align:left;'>Net Profit Margin (%)</th>
+                    <th id="npm_PFY"></th>
+                    <th id="npm_CFY"></th>
+                    <th id="npm_EFY"></th>
+                    <th id="npm_PRFY"></th> 
+                    <th style='text-align:left;'>Net Profit</th>
+                    <th id="netProfit_PFY"></th>
+                    <th id="netProfit_CFY"></th>
+                    <th id="netProfit_EFY"></th>
+                    <th id="netProfit_PRFY"></th> 
+                    
+                </tr>
+                <tr>
+                    <th style='text-align:left;'>Debtors Velocity (days)</th>
+                    <th id="debVel_PFY"></th>
+                    <th id="debVel_CFY"></th>
+                    <th id="debVel_EFY"></th>
+                    <th id="debVel_PRFY"></th>    
+                    <th style='text-align:left;'>Depreciation</th>
+                    <th  id="depr_PFY"></th>
+                    <th id="depr_CFY"></th>
+                    <th  id="depr_EFY"></th>
+                    <th  id="depr_PRFY"></th>       
+                </tr>
+                
+                <tr>
+                    <th style='text-align:left;'>Creditors Velocity (days)</th>
+                    <th id="creVel_PFY"></th>
+                    <th id="creVel_CFY"></th>
+                    <th id="creVel_EFY"></th>
+                    <th id="creVel_PRFY"></th>    
+                    <th style='text-align:left;'>Cash Profit</th>
+                    <th id="cashProfit_PFY">0.00</th>
+                    <th id="cashProfit_CFY">0.00</th>
+                    <th id="cashProfit_EFY">0.00</th>
+                    <th id="cashProfit_PRFY">0.00</th>    
+                    
+                </tr>
+                <tr>
+                    <th style='text-align:left;'>Tangible Net Worth</th>
+                    <th id="tanNW_PFY">0.0</th>
+                    <th id="tanNW_CFY">0.0</th>
+                    <th id="tanNW_EFY">0.0</th>
+                    <th id="tanNW_PRFY">0.0</th> 
+                    <th style='text-align:left;'>Purchases </th>
+                    <th id="purchases_PFY"></th>
+                    <th id="purchases_CFY"></th>
+                    <th id="purchases_EFY"></th>
+                    <th id="purchases_PRFY"></th>
+                </tr>
+                <tr style='background:rgb(197,217,241)'>
+                    <th style='text-align:left;'>Net Working Capital</th>
+                    <th id="NWC_PFY">0.0</th>
+                    <th id="NWC_CFY">0.0</th>
+                    <th id="NWC_EFY">0.0</th>
+                    <th id="NWC_PRFY">0.0</th>    
+                    <th style='text-align:left;'>Stock Turnover Ratio</th>
+                    <th id="STR_PFY"></th>
+                    <th id="STR_CFY"></th>
+                    <th id="STR_EFY"></th>
+                    <th id="STR_PRFY"></th>
+                </tr>
+            </table>    
+            
+        </body>
+    </html>
+    
+    <script>
+    function checkNaNRetInLakhs(val){
+        return (isNaN(val) || val === undefined)?0.0:(val/100000).toFixed(2);
+    }
+    function checkNaN(val){
+        return (isNaN(val) || val === undefined)?0.0:val.toFixed(2);
+    }
+    var custName = {!accName};
+    var branchCode = {!branchCode};
+    document.getElementById("custName").innerHTML = custName;
+    document.getElementById("branchCode").innerHTML = branchCode;
+    document.getElementById("PFY").innerHTML = {!PFY};
+    document.getElementById("CFY").innerHTML = {!CFY};
+    document.getElementById("EFY").innerHTML = {!EFY};
+    document.getElementById("PRFY").innerHTML = {!PRFY};
+    
+    document.getElementById("PFY1").innerHTML = {!PFY};
+    document.getElementById("CFY1").innerHTML = {!CFY};
+    document.getElementById("EFY1").innerHTML = {!EFY};
+    document.getElementById("PRFY1").innerHTML = {!PRFY};
+    
+    var projectedFY_DS = {!projectedFY_DS};
+    document.getElementById("onw1_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.NW_Others1__c);
+    document.getElementById("oiAst_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Intangible_Others__c);
+    document.getElementById("bankBorr_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Bank_Borrowings__c);
+    document.getElementById("sCred_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Sundry_Creditors__c);
+    document.getElementById("sCredFin_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Sundry_Creditors_Finance__c);
+    document.getElementById("snCredExp_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Sundry_Creditors_Exp__c);
+    document.getElementById("prov_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Provisions__c);
+    document.getElementById("otherCurrLib_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Other_Current_Liabilities__c);
+    document.getElementById("clOther1_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.CL_Others_1__c);
+    document.getElementById("clOther2_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.CL_Others_2__c);
+    document.getElementById("totalCurrLib_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Total_Current_Liabilities__c);
+    document.getElementById("termLoan_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Term_Loan_1_Yr__c);
+    document.getElementById("cbBalance_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Cash_and_Bank_Balances__c);
+    document.getElementById("inventories_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Inventories__c);
+    document.getElementById("advDep_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Advances_and_deposits__c);
+    document.getElementById("advSup_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Advance_to_suppliers__c);
+    document.getElementById("bankDep_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Bank_Deposits__c);
+    document.getElementById("otherCurrAss_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Other_Current_Assests__c);
+    document.getElementById("oca1_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.OCA1__c);
+    document.getElementById("oca2_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.OCA2__c);
+    document.getElementById("totalCurrAss_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Total_Current_Assets__c);
+    document.getElementById("snDebt_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Sundry_Debtors__c);
+    document.getElementById("termLoanBankFI_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Term_loan_Banks_FIs__c);
+    document.getElementById("landBuild_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Land_Building__c);
+    document.getElementById("unLoan_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Unsecured_Loans_F_R__c);
+    document.getElementById("plMach_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Plant_Machinery__c);
+    document.getElementById("tlNBFC_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Term_LoanNBFCs__c);
+    document.getElementById("others_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Fixed_Assests_Others__c);
+    document.getElementById("otherTL_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Other_Term_Liabilites__c);
+    document.getElementById("capWIP_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Capital_WIP__c);
+    document.getElementById("tlOther1_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.TL_Others_1__c);
+    document.getElementById("tlOther2_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.TL_Others_2__c);
+    document.getElementById("totaltermLib_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Total_Term_Liabilities__c);
+    document.getElementById("totalFixedAss_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Total_Fixed_Assets__c);
+    document.getElementById("puCap_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Paid_Up_Capital__c);
+    document.getElementById("invSisAss_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Inv_in_Sister_Associates__c);
+    document.getElementById("shAppMoney_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Share_Application_Money__c);
+    document.getElementById("invShETC_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Inv_in_shares_etc__c);
+    document.getElementById("shPre_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Share_Premium__c);
+    document.getElementById("nonCurrOth_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Non_Current_others__c);
+    document.getElementById("genRes_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.General_Reserves__c);
+    document.getElementById("totalNCAss_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Total_Non_Current_Assets__c);
+    document.getElementById("othResd_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Other_Reserves__c);
+    document.getElementById("revRes_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Revaluation_Reserves__c);
+    document.getElementById("plAcc_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Profit_Loss_Account__c);
+    document.getElementById("surPL_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Surplus_in_P_L__c);
+    document.getElementById("miscExp_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Misc_Expenditure__c);
+    document.getElementById("totalNW_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Total_Net_Worth__c);
+    document.getElementById("totalIntAss_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Total_Intangible_Assets__c);
+    document.getElementById("totalAss_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Total_Assets__c);
+    document.getElementById("totalLib_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Total_Liabilities__c);
+    document.getElementById("ttRation_PRFY").innerHTML = checkNaN(projectedFY_DS.TOL_TNW_Ratio__c);
+    document.getElementById("grSales_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Gross_sales__c);
+    document.getElementById("ttRationQE_PRFY").innerHTML = checkNaN(projectedFY_DS.TOL_TNW_Ratio_QE__c);
+    document.getElementById("netSales_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Net_sales__c);
+    document.getElementById("currRatio_PRFY").innerHTML = checkNaN(projectedFY_DS.Current_Ratio__c); 
+    document.getElementById("otherIncome_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Other_income__c);
+    document.getElementById("npm_PRFY").innerHTML = checkNaN(projectedFY_DS.Net_Profit_Margin__c);
+    document.getElementById("netProfit_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Net_profit__c);
+    document.getElementById("debVel_PRFY").innerHTML = checkNaN(projectedFY_DS.Debtors_Velocity_days__c);
+    document.getElementById("depr_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Depreciation__c);
+    document.getElementById("creVel_PRFY").innerHTML = checkNaN(projectedFY_DS.Creditors_Velocity_days__c);
+    document.getElementById("cashProfit_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Cash_profit__c);
+    document.getElementById("tanNW_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Tangible_Net_Worth__c);
+    document.getElementById("purchases_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Purchases__c);
+    document.getElementById("NWC_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Net_Working_Capital__c);
+    document.getElementById("STR_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Stock_Turnover_Ratio__c);
+    document.getElementById("totalOutLiab_PRFY").innerHTML = checkNaNRetInLakhs(projectedFY_DS.Total_Outside_Liabilities__c);
+    
+    var currentFY_DS = {!currentFY_DS};
+    document.getElementById("onw1_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.NW_Others1__c);
+    document.getElementById("oiAst_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Intangible_Others__c);
+    document.getElementById("bankBorr_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Bank_Borrowings__c);
+    document.getElementById("sCred_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Sundry_Creditors__c);
+    document.getElementById("sCredFin_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Sundry_Creditors_Finance__c);
+    document.getElementById("snCredExp_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Sundry_Creditors_Exp__c);
+    document.getElementById("prov_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Provisions__c);
+    document.getElementById("otherCurrLib_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Other_Current_Liabilities__c);
+    document.getElementById("clOther1_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.CL_Others_1__c);
+    document.getElementById("clOther2_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.CL_Others_2__c);
+    document.getElementById("totalCurrLib_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Total_Current_Liabilities__c);
+    document.getElementById("termLoan_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Term_Loan_1_Yr__c);
+    document.getElementById("cbBalance_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Cash_and_Bank_Balances__c);
+    document.getElementById("inventories_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Inventories__c);
+    document.getElementById("advDep_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Advances_and_deposits__c);
+    document.getElementById("advSup_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Advance_to_suppliers__c);
+    document.getElementById("bankDep_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Bank_Deposits__c);
+    document.getElementById("otherCurrAss_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Other_Current_Assests__c);
+    document.getElementById("oca1_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.OCA1__c);
+    document.getElementById("oca2_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.OCA2__c);
+    document.getElementById("totalCurrAss_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Total_Current_Assets__c);
+    document.getElementById("snDebt_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Sundry_Debtors__c);
+    document.getElementById("termLoanBankFI_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Term_loan_Banks_FIs__c);
+    document.getElementById("landBuild_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Land_Building__c);
+    document.getElementById("unLoan_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Unsecured_Loans_F_R__c);
+    document.getElementById("plMach_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Plant_Machinery__c);
+    document.getElementById("tlNBFC_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Term_LoanNBFCs__c);
+    document.getElementById("others_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Fixed_Assests_Others__c);
+    document.getElementById("otherTL_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Other_Term_Liabilites__c);
+    document.getElementById("capWIP_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Capital_WIP__c);
+    document.getElementById("tlOther1_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.TL_Others_1__c);
+    document.getElementById("tlOther2_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.TL_Others_2__c);
+    document.getElementById("totaltermLib_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Total_Term_Liabilities__c);
+    document.getElementById("totalFixedAss_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Total_Fixed_Assets__c);
+    document.getElementById("puCap_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Paid_Up_Capital__c);
+    document.getElementById("invSisAss_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Inv_in_Sister_Associates__c);
+    document.getElementById("shAppMoney_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Share_Application_Money__c);
+    document.getElementById("invShETC_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Inv_in_shares_etc__c);
+    document.getElementById("shPre_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Share_Premium__c);
+    document.getElementById("nonCurrOth_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Non_Current_others__c);
+    document.getElementById("genRes_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.General_Reserves__c);
+    document.getElementById("totalNCAss_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Total_Non_Current_Assets__c);
+    document.getElementById("othResd_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Other_Reserves__c);
+    document.getElementById("revRes_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Revaluation_Reserves__c);
+    document.getElementById("plAcc_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Profit_Loss_Account__c);
+    document.getElementById("surPL_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Surplus_in_P_L__c);
+    document.getElementById("miscExp_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Misc_Expenditure__c);
+    document.getElementById("totalNW_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Total_Net_Worth__c);
+    document.getElementById("totalIntAss_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Total_Intangible_Assets__c);
+    document.getElementById("totalAss_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Total_Assets__c);
+    document.getElementById("totalLib_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Total_Liabilities__c);
+    document.getElementById("ttRation_CFY").innerHTML = checkNaN(currentFY_DS.TOL_TNW_Ratio__c);
+    document.getElementById("grSales_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Gross_sales__c);
+    document.getElementById("ttRationQE_CFY").innerHTML = checkNaN(currentFY_DS.TOL_TNW_Ratio_QE__c);
+    document.getElementById("netSales_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Net_sales__c);
+    document.getElementById("currRatio_CFY").innerHTML = checkNaN(currentFY_DS.Current_Ratio__c); 
+    document.getElementById("otherIncome_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Other_income__c);
+    document.getElementById("npm_CFY").innerHTML = checkNaN(currentFY_DS.Net_Profit_Margin__c);
+    document.getElementById("netProfit_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Net_profit__c);
+    document.getElementById("debVel_CFY").innerHTML = checkNaN(currentFY_DS.Debtors_Velocity_days__c);
+    document.getElementById("depr_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Depreciation__c);
+    document.getElementById("creVel_CFY").innerHTML = checkNaN(currentFY_DS.Creditors_Velocity_days__c);
+    document.getElementById("cashProfit_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Cash_profit__c);
+    document.getElementById("tanNW_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Tangible_Net_Worth__c);
+    document.getElementById("purchases_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Purchases__c);
+    document.getElementById("NWC_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Net_Working_Capital__c);
+    document.getElementById("STR_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Stock_Turnover_Ratio__c);
+    document.getElementById("totalOutLiab_CFY").innerHTML = checkNaNRetInLakhs(currentFY_DS.Total_Outside_Liabilities__c);
+    
+    
+    var prevFY_DS = {!prevFY_DS};
+    document.getElementById("onw1_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.NW_Others1__c);
+    document.getElementById("oiAst_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Intangible_Others__c);
+    document.getElementById("bankBorr_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Bank_Borrowings__c);
+    document.getElementById("sCred_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Sundry_Creditors__c);
+    document.getElementById("sCredFin_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Sundry_Creditors_Finance__c);
+    document.getElementById("snCredExp_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Sundry_Creditors_Exp__c);
+    document.getElementById("prov_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Provisions__c);
+    document.getElementById("otherCurrLib_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Other_Current_Liabilities__c);
+    document.getElementById("clOther1_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.CL_Others_1__c);
+    document.getElementById("clOther2_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.CL_Others_2__c);
+    document.getElementById("totalCurrLib_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Total_Current_Liabilities__c);
+    document.getElementById("termLoan_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Term_Loan_1_Yr__c);
+    document.getElementById("cbBalance_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Cash_and_Bank_Balances__c);
+    document.getElementById("inventories_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Inventories__c);
+    document.getElementById("advDep_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Advances_and_deposits__c);
+    document.getElementById("advSup_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Advance_to_suppliers__c);
+    document.getElementById("bankDep_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Bank_Deposits__c);
+    document.getElementById("otherCurrAss_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Other_Current_Assests__c);
+    document.getElementById("oca1_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.OCA1__c);
+    document.getElementById("oca2_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.OCA2__c);
+    document.getElementById("totalCurrAss_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Total_Current_Assets__c);
+    document.getElementById("snDebt_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Sundry_Debtors__c);
+    document.getElementById("termLoanBankFI_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Term_loan_Banks_FIs__c);
+    document.getElementById("landBuild_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Land_Building__c);
+    document.getElementById("unLoan_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Unsecured_Loans_F_R__c);
+    document.getElementById("plMach_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Plant_Machinery__c);
+    document.getElementById("tlNBFC_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Term_LoanNBFCs__c);
+    document.getElementById("others_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Fixed_Assests_Others__c);
+    document.getElementById("otherTL_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Other_Term_Liabilites__c);
+    document.getElementById("capWIP_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Capital_WIP__c);
+    document.getElementById("tlOther1_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.TL_Others_1__c);
+    document.getElementById("tlOther2_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.TL_Others_2__c);
+    document.getElementById("totaltermLib_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Total_Term_Liabilities__c);
+    document.getElementById("totalFixedAss_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Total_Fixed_Assets__c);
+    document.getElementById("puCap_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Paid_Up_Capital__c);
+    document.getElementById("invSisAss_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Inv_in_Sister_Associates__c);
+    document.getElementById("shAppMoney_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Share_Application_Money__c);
+    document.getElementById("invShETC_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Inv_in_shares_etc__c);
+    document.getElementById("shPre_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Share_Premium__c);
+    document.getElementById("nonCurrOth_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Non_Current_others__c);
+    document.getElementById("genRes_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.General_Reserves__c);
+    document.getElementById("totalNCAss_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Total_Non_Current_Assets__c);
+    document.getElementById("othResd_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Other_Reserves__c);
+    document.getElementById("revRes_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Revaluation_Reserves__c);
+    document.getElementById("plAcc_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Profit_Loss_Account__c);
+    document.getElementById("surPL_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Surplus_in_P_L__c);
+    document.getElementById("miscExp_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Misc_Expenditure__c);
+    document.getElementById("totalNW_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Total_Net_Worth__c);
+    document.getElementById("totalIntAss_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Total_Intangible_Assets__c);
+    document.getElementById("totalAss_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Total_Assets__c);
+    document.getElementById("totalLib_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Total_Liabilities__c);
+    document.getElementById("ttRation_PFY").innerHTML = checkNaN(prevFY_DS.TOL_TNW_Ratio__c);
+    document.getElementById("grSales_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Gross_sales__c);
+    document.getElementById("ttRationQE_PFY").innerHTML = checkNaN(prevFY_DS.TOL_TNW_Ratio_QE__c);
+    document.getElementById("netSales_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Net_sales__c);
+    document.getElementById("currRatio_PFY").innerHTML = checkNaN(prevFY_DS.Current_Ratio__c); 
+    document.getElementById("otherIncome_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Other_income__c);
+    document.getElementById("npm_PFY").innerHTML = checkNaN(prevFY_DS.Net_Profit_Margin__c);
+    document.getElementById("netProfit_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Net_profit__c);
+    document.getElementById("debVel_PFY").innerHTML = checkNaN(prevFY_DS.Debtors_Velocity_days__c);
+    document.getElementById("depr_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Depreciation__c);
+    document.getElementById("creVel_PFY").innerHTML = checkNaN(prevFY_DS.Creditors_Velocity_days__c);
+    document.getElementById("cashProfit_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Cash_profit__c);
+    document.getElementById("tanNW_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Tangible_Net_Worth__c);
+    document.getElementById("purchases_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Purchases__c);
+    document.getElementById("NWC_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Net_Working_Capital__c);
+    document.getElementById("STR_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Stock_Turnover_Ratio__c);
+    document.getElementById("totalOutLiab_PFY").innerHTML = checkNaNRetInLakhs(prevFY_DS.Total_Outside_Liabilities__c);
+    
+    
+    var estimatedFY_DS = {!estimatedFY_DS};
+    document.getElementById("onw1_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.NW_Others1__c);
+    document.getElementById("oiAst_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Intangible_Others__c);
+    document.getElementById("bankBorr_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Bank_Borrowings__c);
+    document.getElementById("sCred_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Sundry_Creditors__c);
+    document.getElementById("sCredFin_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Sundry_Creditors_Finance__c);
+    document.getElementById("snCredExp_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Sundry_Creditors_Exp__c);
+    document.getElementById("prov_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Provisions__c);
+    document.getElementById("otherCurrLib_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Other_Current_Liabilities__c);
+    document.getElementById("clOther1_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.CL_Others_1__c);
+    document.getElementById("clOther2_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.CL_Others_2__c);
+    document.getElementById("totalCurrLib_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Total_Current_Liabilities__c);
+    document.getElementById("termLoan_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Term_Loan_1_Yr__c);
+    document.getElementById("cbBalance_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Cash_and_Bank_Balances__c);
+    document.getElementById("inventories_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Inventories__c);
+    document.getElementById("advDep_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Advances_and_deposits__c);
+    document.getElementById("advSup_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Advance_to_suppliers__c);
+    document.getElementById("bankDep_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Bank_Deposits__c);
+    document.getElementById("otherCurrAss_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Other_Current_Assests__c);
+    document.getElementById("oca1_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.OCA1__c);
+    document.getElementById("oca2_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.OCA2__c);
+    document.getElementById("totalCurrAss_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Total_Current_Assets__c);
+    document.getElementById("snDebt_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Sundry_Debtors__c);
+    document.getElementById("termLoanBankFI_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Term_loan_Banks_FIs__c);
+    document.getElementById("landBuild_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Land_Building__c);
+    document.getElementById("unLoan_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Unsecured_Loans_F_R__c);
+    document.getElementById("plMach_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Plant_Machinery__c);
+    document.getElementById("tlNBFC_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Term_LoanNBFCs__c);
+    document.getElementById("others_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Fixed_Assests_Others__c);
+    document.getElementById("otherTL_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Other_Term_Liabilites__c);
+    document.getElementById("capWIP_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Capital_WIP__c);
+    document.getElementById("tlOther1_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.TL_Others_1__c);
+    document.getElementById("tlOther2_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.TL_Others_2__c);
+    document.getElementById("totaltermLib_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Total_Term_Liabilities__c);
+    document.getElementById("totalFixedAss_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Total_Fixed_Assets__c);
+    document.getElementById("puCap_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Paid_Up_Capital__c);
+    document.getElementById("invSisAss_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Inv_in_Sister_Associates__c);
+    document.getElementById("shAppMoney_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Share_Application_Money__c);
+    document.getElementById("invShETC_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Inv_in_shares_etc__c);
+    document.getElementById("shPre_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Share_Premium__c);
+    document.getElementById("nonCurrOth_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Non_Current_others__c);
+    document.getElementById("genRes_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.General_Reserves__c);
+    document.getElementById("totalNCAss_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Total_Non_Current_Assets__c);
+    document.getElementById("othResd_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Other_Reserves__c);
+    document.getElementById("revRes_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Revaluation_Reserves__c);
+    document.getElementById("plAcc_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Profit_Loss_Account__c);
+    document.getElementById("surPL_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Surplus_in_P_L__c);
+    document.getElementById("miscExp_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Misc_Expenditure__c);
+    document.getElementById("totalNW_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Total_Net_Worth__c);
+    document.getElementById("totalIntAss_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Total_Intangible_Assets__c);
+    document.getElementById("totalAss_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Total_Assets__c);
+    document.getElementById("totalLib_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Total_Liabilities__c);
+    document.getElementById("ttRation_EFY").innerHTML = checkNaN(estimatedFY_DS.TOL_TNW_Ratio__c);
+    document.getElementById("grSales_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Gross_sales__c);
+    document.getElementById("ttRationQE_EFY").innerHTML = checkNaN(estimatedFY_DS.TOL_TNW_Ratio_QE__c);
+    document.getElementById("netSales_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Net_sales__c);
+    document.getElementById("currRatio_EFY").innerHTML = checkNaN(estimatedFY_DS.Current_Ratio__c); 
+    document.getElementById("otherIncome_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Other_income__c);
+    document.getElementById("npm_EFY").innerHTML = checkNaN(estimatedFY_DS.Net_Profit_Margin__c);
+    document.getElementById("netProfit_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Net_profit__c);
+    document.getElementById("debVel_EFY").innerHTML = checkNaN(estimatedFY_DS.Debtors_Velocity_days__c);
+    document.getElementById("depr_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Depreciation__c);
+    document.getElementById("creVel_EFY").innerHTML = checkNaN(estimatedFY_DS.Creditors_Velocity_days__c);
+    document.getElementById("cashProfit_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Cash_profit__c);
+    document.getElementById("tanNW_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Tangible_Net_Worth__c);
+    document.getElementById("purchases_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Purchases__c);
+    document.getElementById("NWC_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Net_Working_Capital__c);
+    document.getElementById("STR_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Stock_Turnover_Ratio__c);
+    document.getElementById("totalOutLiab_EFY").innerHTML = checkNaNRetInLakhs(estimatedFY_DS.Total_Outside_Liabilities__c);
+    
+    </script>
+</apex:page>

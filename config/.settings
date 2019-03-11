@@ -1,0 +1,17 @@
+{
+    "projectName": "KVB",
+    "username": "shubham.shukla_sit@etmarlabs.com",
+    "id": "f8c6bef0-4439-11e9-899f-49bfcc80c139",
+    "namespace": "",
+    "orgType": "developer",
+    "loginUrl": "https://login.salesforce.com/",
+    "instanceUrl": "https://kvb--SIT.cs58.my.salesforce.com",
+    "workspace": "C:\\Users\\kishan.panchal\\Documents",
+    "subscription": [
+        "ApexClass",
+        "ApexComponent",
+        "ApexPage",
+        "ApexTrigger",
+        "StaticResource"
+    ]
+}
